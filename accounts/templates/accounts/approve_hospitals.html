@@ -1,0 +1,30 @@
+{% extends "accounts/base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>Hospitals Awaiting Approval</h2>
+{% if hospitals %}
+    <table>
+        <thead>
+            <tr>
+                <th>Hospital Name</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for hospital in hospitals %}
+            <tr>
+                <td>{{ hospital.name }}</td>
+                <td>
+                    <form method="post" action="{% url 'accounts:approve_hospital' hospital.id %}">
+                        {% csrf_token %} <button type="submit" class="btn-success">Approve Hospital</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p>No hospitals are currently awaiting approval. 🎉</p>
+{% endif %}
+</div>
+{% endblock %}

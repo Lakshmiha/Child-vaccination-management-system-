@@ -13,4 +13,10 @@ urlpatterns = [
     path('children/', views.view_children, name='view_children'),
     path('edit-child/<int:child_id>/', views.edit_child, name='edit_child'),
     path('delete-child/<int:child_id>/', views.delete_child, name='delete_child'),
+    path('hospital/register/', views.hospital_register, name='hospital_register'),
+    path('hospital/login/', views.hospital_login, name='hospital_login'),
+    path('hospital/dashboard/', views.hospital_dashboard, name='hospital_dashboard'),
+    path('hospitals/pending/', views.approve_hospitals, name='approve_hospitals'),
+    path('hospitals/approve/<int:hospital_id>/', views.approve_hospital, name='approve_hospital'),
+    path('hospitals/reject/<int:hospital_id>/', views.reject_hospital, name='reject_hospital'),
 ]

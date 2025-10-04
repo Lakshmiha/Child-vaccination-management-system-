@@ -1,0 +1,135 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Child Vaccination Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Simple custom styles to enhance the look without external images */
+        .header-section {
+            background: linear-gradient(135deg,#007bff 0%,#0056b3 100%); /* Primary Blue for health/trust */
+            color: white;
+            padding: 100px 0;
+            min-height:80vh;
+            dispaly:flex;
+            align-items:center;
+        }
+        .cta-section{
+            padding:60px 0;
+            background-color:#f8f9fa;
+        }
+        .feature-icon{
+            font-size:2.5rem;
+            color;#007bff;
+            margin-bottom:15px;
+        }
+        .card-link{
+            transition:transform 0.3s ease-in-out,box-shadow 0.3s ease-in-out;
+            cursor:pointer;
+            height:100%;
+        }
+        .card-link:hover{
+            transform:translateY(-5px);
+            box-shadow:0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+    </style>
+</head>
+<body>
+
+    <header class="header-section">
+        <div class="container text-center">
+            <!--<img 
+                src="{% static 'accounts/images/logo.png' %}" 
+                alt="MES College Logo" 
+                style="height: 100px; margin-bottom: 20px;"
+        >-->
+            <h1 class="display-3 fw-bold">CHILD VACCINATION MANAGEMENT SYSTEM</h1>
+            <p class="lead mt-4 mb-5">
+                Digitizing records and ensuring timely immunization for a healthier future.
+            </p>
+            <a href="{% url 'accounts:parent_register' %}" class="btn btn-warning btn-lg me-3 shadow-lg">
+                Register your child now
+            </a>
+            <a href="#features" class="btn btn-outline-light btn-lg">
+                Learn More
+            </a>
+        </div>
+    </header>
+
+    <section id="features" class="container py-5">
+        <h2 class="text-center mb-5 fw-fold">Transforming Child Healthcare Management</h2>
+        <div class="row text-center">
+            
+            <div class="col-md-4 mb-4">
+                <div class="card card-link p-3">
+                    <div class="feature-icon">📅</div>
+                    <h3 class="h5 card-title">🔔 Automated Reminders</h3>
+                    [cite_start]<p class="card-text">Receive timely email/SMS reminders for upcoming vaccines, eliminating missed doses[cite: 36, 49, 84]..</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card\ card-link p-3">
+                    <div class="feature-icon">🛡️</div>
+                    <h3 class="h5 card-title">✅ Digital & Secure Records</h3>
+                    [cite_start]<p class="card-text">Replaces paper-based systems prone to loss and errors[cite: 56]. Digitize and centralize vaccination records for easy access and management[cite: 47, 48].</p>
+                </div>
+            </div>
+
+            <div class="col-md-4 mb-4">
+                <div class="card card-link p-3">
+                    <div class="feature-icon">🏥</div>
+                    <h3 class="h5 card-title">📅 Online Appointment Booking</h3>
+                    [cite_start]<p class="card-text">Enables parents to easily book vaccination appointments with hospitals directly through the web app[cite: 36, 49, 68].</p>
+                </div>
+            </div>
+
+        </div>
+    </section>
+    
+    <section class="cta-section">
+        <div class="container">
+            <h2 class="text-center mb-5 fw-bold">Ready to Get Started?</h2>
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card p-4 text-center border-primary shadow">
+                            <h3 class="card-title text-primary">Parent Portal</h3>
+                            <p class="card-text">Access your child's schedule, history, and book new appointments.</p>
+                            <a href="{% url 'accounts:parent_login' %}" class="btn btn-primary btn-lg mt-3">
+                                Parent Login
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <div class="card p-4 text-center border-success shadow">
+                            <h3 class="card-title text-success">Hospital & Admin Access</h3>
+                            <p class="card-text">Manage vaccination records, appointments, and system oversight.</p>
+                            <div class="d-flex justify-content-center flex-wrap">
+                            <a href="{% url 'accounts:hospital_register' %}" class="btn btn-success mt-3 mx-2">
+                                Hospital Register
+                            </a>
+                            <a href="{% url 'accounts:hospital_login' %}" class="btn btn-outline-success mt-3 mx-2">
+                                Hospital Login
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+        <div class="text-center mt-4">
+            <a href="" class="text-muted small">System Administrator Access</a>
+        </div>
+    </div>
+    </section>
+    
+    <footer class="text-center text-muted py-3 small bg-dark text-light">
+        &copy; 2025 Child Vaccination Management System. Built with Django.
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

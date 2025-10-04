@@ -8,7 +8,7 @@
         <h4 class="mb-0">Parent Login</h4>
       </div>
       <div class="card-body">
-        <form method="POST">
+        <form method="POST" action="{% url 'accounts:parent_login' %}">
           {% csrf_token %}
           <div class="mb-3">
             <label>Username</label>

@@ -21,3 +21,15 @@ class Child(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Hospital(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
+    name = models.CharField(max_length=200)
+    address = models.TextField()
+    phone = models.CharField(max_length=20,unique=True)
+    email = models.EmailField(unique=True)
+    approved = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.name

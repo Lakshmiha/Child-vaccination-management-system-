@@ -1,0 +1,8 @@
+{% extends "accounts/base.html" %}
+{% block content %}
+<div class="container mt-4">
+  <h2>{{ hospital.name }} — Dashboard</h2>
+  <p>Approved on: {{ hospital.created_at }}</p>
+  <!-- future: list appointments, update vaccination records, etc. -->
+</div>
+{% endblock %}
