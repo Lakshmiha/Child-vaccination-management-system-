@@ -6,6 +6,8 @@ from .forms import ParentRegistrationForm,ChildForm
 from .models import Parent,Child
 from .forms import HospitalRegisterForm
 from .models import Hospital
+from .models import Appointment,Hospital
+from .forms import AppointmentForm
 
 def home(request):  
     """Root URL: redirect to dashboard if logged in, else to login"""
@@ -51,9 +53,12 @@ def parent_logout(request):
 
 @login_required
 def parent_dashboard(request):
-    parent = Parent.objects.filter(user=request.user).first()
+    try:
+        parent = Parent.objects.filter(user=request.user).first()
+    except Parent.DoesNotExist:
+        parent=None
     children = Child.objects.filter(parent=parent)
-    return render(request, "accounts/parent_dashboard.html", {"parent": parent})
+    return render(request, "accounts/parent_dashboard.html", {"parent": parent,"children":children})
 
 @login_required
 def add_child(request):
@@ -219,3 +224,28 @@ def reject_hospital(request, hospital_id):
     #hospital.delete()
         messages.success(request, "Hospital rejected and removed.")
     return redirect('accounts:approve_hospitals')
+
+@login_required
+def book_appointment(request):
+    parent = Parent.objects.filter(user=request.user).first()
+    if not parent:
+        messages.error(request, "No parent profile found. Please register first.")
+        return redirect('accounts:parent_register')
+    if request.method == 'POST':
+        form = AppointmentForm(request.POST)
+        if form.is_valid():
+            appointment = form.save(commit=False)
+            appointment.parent = parent
+            appointment.save()
+            messages.success(request, "Appointment booked successfully!")
+            return redirect('accounts:view_appointments')
+    else:
+        form = AppointmentForm()
+    return render(request, 'accounts/book_appointment.html', {'form': form})
+
+
+@login_required
+def view_appointments(request):
+    parent = Parent.objects.filter(user=request.user).first()
+    appointments = Appointment.objects.filter(parent=parent).order_by('date')
+    return render(request, 'accounts/view_appointments.html', {'appointments': appointments})

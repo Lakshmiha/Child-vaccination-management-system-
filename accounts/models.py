@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 
 class Parent(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -33,3 +34,20 @@ class Hospital(models.Model):
 
     def __str__(self):
         return self.name
+    
+
+class Appointment(models.Model):
+    parent = models.ForeignKey(Parent, on_delete=models.CASCADE)
+    child = models.ForeignKey(Child, on_delete=models.CASCADE)
+    hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE)
+    date = models.DateField()
+    time = models.TimeField()
+    status = models.CharField(
+        max_length=20,
+        choices=[('Pending', 'Pending'),('Approved','Approved'),('Completed', 'Completed'),('Cancelled','Cancelled')],
+        default='Pending'
+    )
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.child.name} - {self.hospital.name} ({self.date})"

@@ -117,6 +117,28 @@
                             </a>
                         </div>
                     </div>
+                    <div class="row mt-5">
+                    <div class="col-md-6 mb-4">
+                        <div class="card p-4 text-center border-info shadow">
+                            <h3 class="card-title text-info">📅 Book Appointment</h3>
+                            <p class="card-text">Schedule a vaccination appointment with your preferred hospital easily.</p>
+                            <a href="{% url 'accounts:book_appointment' %}" class="btn btn-info btn-lg mt-3">
+                                Book Appointment
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <div class="card p-4 text-center border-warning shadow">
+                            <h3 class="card-title text-warning">🩺 View Appointments</h3>
+                                <p class="card-text">Check your upcoming vaccination appointments and their status.</p>
+                                <a href="{% url 'accounts:view_appointments' %}" class="btn btn-warning btn-lg mt-3">
+                                    View My Appointments
+                                </a>
+                        </div>
+                    </div>
+                </div>
+
                 </div>
             </div>
         

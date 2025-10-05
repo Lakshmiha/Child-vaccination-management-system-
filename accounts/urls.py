@@ -19,4 +19,6 @@ urlpatterns = [
     path('hospitals/pending/', views.approve_hospitals, name='approve_hospitals'),
     path('hospitals/approve/<int:hospital_id>/', views.approve_hospital, name='approve_hospital'),
     path('hospitals/reject/<int:hospital_id>/', views.reject_hospital, name='reject_hospital'),
+    path('book-appointment/', views.book_appointment, name='book_appointment'),
+    path('view-appointments/', views.view_appointments, name='view_appointments'),
 ]

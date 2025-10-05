@@ -4,6 +4,8 @@ from .models import Parent,Child
 from django.core.exceptions import ValidationError
 from django.forms.widgets import DateInput
 from .models import Hospital
+from .models import Appointment
+from django.forms.widgets import DateInput,TimeInput
 
 class ParentRegistrationForm(forms.ModelForm):
     username = forms.CharField(max_length=150, required=True)
@@ -104,3 +106,12 @@ class HospitalRegisterForm(forms.ModelForm):
             user.save()
             hospital.save()
         return hospital
+    
+class AppointmentForm(forms.ModelForm):
+    class Meta:
+        model = Appointment
+        fields = ['child', 'hospital', 'date', 'time']
+        widgets = {
+            'date': DateInput(attrs={'type': 'date','class':'form-control'}),
+            'time': TimeInput(attrs={'type': 'time','class':'form-control'}),
+        }
