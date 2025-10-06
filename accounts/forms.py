@@ -4,7 +4,7 @@ from .models import Parent,Child
 from django.core.exceptions import ValidationError
 from django.forms.widgets import DateInput
 from .models import Hospital
-from .models import Appointment
+from .models import Appointment,Vaccine
 from django.forms.widgets import DateInput,TimeInput
 
 class ParentRegistrationForm(forms.ModelForm):
@@ -110,7 +110,7 @@ class HospitalRegisterForm(forms.ModelForm):
 class AppointmentForm(forms.ModelForm):
     class Meta:
         model = Appointment
-        fields = ['child', 'hospital', 'date', 'time']
+        fields = ['child', 'hospital', 'vaccine','date', 'time']
         widgets = {
             'date': DateInput(attrs={'type': 'date','class':'form-control'}),
             'time': TimeInput(attrs={'type': 'time','class':'form-control'}),

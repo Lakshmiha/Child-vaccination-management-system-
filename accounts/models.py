@@ -26,7 +26,7 @@ class Child(models.Model):
 
 class Hospital(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True, blank=True)
-    name = models.CharField(max_length=200)
+    name = models.CharField(max_length=255)
     address = models.TextField()
     phone = models.CharField(max_length=20,unique=True)
     email = models.EmailField(unique=True)
@@ -36,10 +36,20 @@ class Hospital(models.Model):
         return self.name
     
 
+class Vaccine(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(blank=True)
+    recommended_age = models.CharField(max_length=50, blank=True)
+
+
+    def __str__(self):
+        return self.name
+
 class Appointment(models.Model):
     parent = models.ForeignKey(Parent, on_delete=models.CASCADE)
     child = models.ForeignKey(Child, on_delete=models.CASCADE)
     hospital = models.ForeignKey(Hospital, on_delete=models.CASCADE)
+    vaccine = models.ForeignKey(Vaccine, on_delete=models.SET_NULL, null=True, blank=True)
     date = models.DateField()
     time = models.TimeField()
     status = models.CharField(

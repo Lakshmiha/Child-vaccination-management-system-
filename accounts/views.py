@@ -54,11 +54,16 @@ def parent_logout(request):
 @login_required
 def parent_dashboard(request):
     try:
-        parent = Parent.objects.filter(user=request.user).first()
+        parent = Parent.objects.get(user=request.user)
     except Parent.DoesNotExist:
-        parent=None
-    children = Child.objects.filter(parent=parent)
-    return render(request, "accounts/parent_dashboard.html", {"parent": parent,"children":children})
+        parent = None
+
+    children = Child.objects.filter(parent=parent) if parent else []
+
+    return render(request, "accounts/parent_dashboard.html", {
+        "parent": parent,
+        "children": children,
+    })
 
 @login_required
 def add_child(request):
@@ -249,3 +254,4 @@ def view_appointments(request):
     parent = Parent.objects.filter(user=request.user).first()
     appointments = Appointment.objects.filter(parent=parent).order_by('date')
     return render(request, 'accounts/view_appointments.html', {'appointments': appointments})
+

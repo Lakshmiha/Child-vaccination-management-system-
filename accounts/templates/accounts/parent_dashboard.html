@@ -35,8 +35,8 @@
   <p class="text-muted">No children registered yet. Add one below!</p>
 {% endif %}
     <a href="{% url 'accounts:add_child' %}" class="btn btn-success">Add Child</a>
-    <a href="{% url 'accounts:book_appointment'}" class="btn btn-warning">Book Appointment</a>
-    <a href="#" class="btn btn-secondary">View Reminders</a>
+    <a href="{% url 'accounts:book_appointment' %}" class="btn btn-warning">Book Appointment</a>
+    <a href="{% url 'accounts:view_appointments' %}" class="btn btn-info">View Appointments</a>
   </div>
 </div>
 {% endblock %}
