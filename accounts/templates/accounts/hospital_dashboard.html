@@ -1,8 +1,315 @@
 {% extends "accounts/base.html" %}
+{% block title %}Hospital Dashboard{% endblock %}
 {% block content %}
-<div class="container mt-4">
-  <h2>{{ hospital.name }} — Dashboard</h2>
-  <p>Approved on: {{ hospital.created_at }}</p>
-  <!-- future: list appointments, update vaccination records, etc. -->
+<style>
+  .dashboard-header {
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+    color: white;
+    padding: 2.5rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  }
+  
+  .hospital-card {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+  }
+  
+  .hospital-icon {
+    width: 100px;
+    height: 100px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+  }
+  
+  .hospital-info h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  
+  .badge-approved {
+    background: rgba(255,255,255,0.3);
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  
+  .stat-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  }
+  
+  .stat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+  }
+  
+  .stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    color: white;
+  }
+  
+  .stat-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #2C3E50;
+  }
+  
+  .stat-label {
+    color: #6c757d;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+  
+  .info-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #2C3E50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .feature-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 15px;
+    padding: 2rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+    text-align: center;
+  }
+  
+  .feature-card:hover {
+    border-color: #56ab2f;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+  }
+  
+  .feature-icon {
+    width: 70px;
+    height: 70px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    font-size: 2rem;
+  }
+  
+  .feature-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: #2C3E50;
+  }
+  
+  .feature-description {
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
+  
+  .coming-soon-badge {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 10px;
+  }
+  
+  @media (max-width: 768px) {
+    .hospital-card {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+</style>
+
+<div class="dashboard-header">
+  <div class="hospital-card">
+    <div class="hospital-icon">
+      <i class="bi bi-hospital-fill"></i>
+    </div>
+    <div class="hospital-info">
+      <h2>{{ hospital.name }}</h2>
+      <p class="mb-2 opacity-75">Hospital Management Dashboard</p>
+      <div class="badge-approved">
+        <i class="bi bi-check-circle-fill"></i>
+        Approved & Active
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Statistics -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-header">
+      <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+        <i class="bi bi-calendar-event"></i>
+      </div>
+    </div>
+    <div class="stat-value">0</div>
+    <div class="stat-label">Total Appointments</div>
+  </div>
+  
+  <div class="stat-card">
+    <div class="stat-header">
+      <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);">
+        <i class="bi bi-clock-history"></i>
+      </div>
+    </div>
+    <div class="stat-value">0</div>
+    <div class="stat-label">Pending Appointments</div>
+  </div>
+  
+  <div class="stat-card">
+    <div class="stat-header">
+      <div class="stat-icon" style="background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);">
+        <i class="bi bi-check-circle"></i>
+      </div>
+    </div>
+    <div class="stat-value">0</div>
+    <div class="stat-label">Completed Vaccinations</div>
+  </div>
+  
+  <div class="stat-card">
+    <div class="stat-header">
+      <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
+        <i class="bi bi-people"></i>
+      </div>
+    </div>
+    <div class="stat-value">0</div>
+    <div class="stat-label">Total Patients</div>
+  </div>
+</div>
+
+<!-- Hospital Information -->
+<div class="info-card">
+  <h5 class="section-title">
+    <i class="bi bi-building text-success"></i>
+    Hospital Information
+  </h5>
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <strong><i class="bi bi-hospital me-2 text-primary"></i>Hospital Name:</strong><br>
+      <span class="text-muted">{{ hospital.name }}</span>
+    </div>
+    <div class="col-md-6 mb-3">
+      <strong><i class="bi bi-envelope me-2 text-success"></i>Email:</strong><br>
+      <span class="text-muted">{{ hospital.email }}</span>
+    </div>
+    <div class="col-md-6 mb-3">
+      <strong><i class="bi bi-telephone me-2 text-info"></i>Phone:</strong><br>
+      <span class="text-muted">{{ hospital.phone }}</span>
+    </div>
+    <div class="col-md-6 mb-3">
+      <strong><i class="bi bi-geo-alt me-2 text-danger"></i>Address:</strong><br>
+      <span class="text-muted">{{ hospital.address }}</span>
+    </div>
+  </div>
+</div>
+
+<!-- Features Section -->
+<div class="info-card">
+  <h5 class="section-title">
+    <i class="bi bi-grid text-primary"></i>
+    Available Features
+  </h5>
+  
+  <div class="feature-grid">
+    <div class="feature-card">
+      <div class="feature-icon">
+        <i class="bi bi-calendar-check" style="color: #667eea;"></i>
+      </div>
+      <div class="feature-title">Appointment Management</div>
+      <div class="feature-description">View and manage vaccination appointments</div>
+      <div class="coming-soon-badge">Coming Soon</div>
+    </div>
+    
+    <div class="feature-card">
+      <div class="feature-icon">
+        <i class="bi bi-file-medical" style="color: #4facfe;"></i>
+      </div>
+      <div class="feature-title">Vaccination Records</div>
+      <div class="feature-description">Update and maintain vaccination records</div>
+      <div class="coming-soon-badge">Coming Soon</div>
+    </div>
+    
+    <div class="feature-card">
+      <div class="feature-icon">
+        <i class="bi bi-graph-up" style="color: #56ab2f;"></i>
+      </div>
+      <div class="feature-title">Reports & Analytics</div>
+      <div class="feature-description">View statistics and generate reports</div>
+      <div class="coming-soon-badge">Coming Soon</div>
+    </div>
+    
+    <div class="feature-card">
+      <div class="feature-icon">
+        <i class="bi bi-bell" style="color: #fa709a;"></i>
+      </div>
+      <div class="feature-title">Reminder System</div>
+      <div class="feature-description">Send automated reminders to parents</div>
+      <div class="coming-soon-badge">Coming Soon</div>
+    </div>
+  </div>
+</div>
+
+<!-- Quick Info -->
+<div class="alert alert-info border-0 shadow-sm" style="border-radius: 15px;">
+  <i class="bi bi-info-circle-fill me-2"></i>
+  <strong>Welcome to your dashboard!</strong> More features are being developed to help you manage appointments and vaccination records efficiently.
 </div>
 {% endblock %}

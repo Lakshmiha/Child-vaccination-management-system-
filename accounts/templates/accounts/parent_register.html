@@ -1,18 +1,182 @@
 {% extends "accounts/base.html" %}
-{% block title %}Register{% endblock %}
+{% block title %}Parent Registration{% endblock %}
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-6">
-    <div class="card shadow">
-      <div class="card-header bg-success text-white">
-        <h4 class="mb-0">Parent Registration</h4>
+<style>
+  .register-wrapper {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+  }
+  
+  .register-card {
+    max-width: 650px;
+    width: 100%;
+    animation: fadeInUp 0.6s ease;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .register-header {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    padding: 2rem;
+    border-radius: 20px 20px 0 0;
+  }
+  
+  .register-icon {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  }
+  
+  .register-icon i {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .register-body {
+    padding: 2.5rem;
+    background: white;
+  }
+  
+  .register-body p {
+    margin-bottom: 0;
+  }
+  
+  .register-body p label {
+    font-weight: 500;
+    color: #2C3E50;
+    margin-bottom: 8px;
+    display: block;
+  }
+  
+  .register-body input,
+  .register-body textarea,
+  .register-body select {
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: 2px solid #e0e0e0;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .register-body input:focus,
+  .register-body textarea:focus,
+  .register-body select:focus {
+    border-color: #4facfe;
+    box-shadow: 0 0 0 0.2rem rgba(79, 172, 254, 0.15);
+    outline: none;
+  }
+  
+  .register-body textarea {
+    min-height: 100px;
+    resize: vertical;
+  }
+  
+  .register-body .helptext {
+    display: block;
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: -1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .register-body .errorlist {
+    list-style: none;
+    padding: 0;
+    margin: -1rem 0 1rem 0;
+  }
+  
+  .register-body .errorlist li {
+    color: #dc3545;
+    font-size: 0.875rem;
+    padding: 5px 10px;
+    background: #ffe0e0;
+    border-radius: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .register-btn {
+    padding: 15px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    border: none;
+    transition: all 0.3s ease;
+  }
+  
+  .register-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(79, 172, 254, 0.4);
+  }
+  
+  .register-footer {
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 0 0 20px 20px;
+    text-align: center;
+  }
+  
+  .register-footer a {
+    color: #4facfe;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  
+  .register-footer a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<div class="register-wrapper">
+  <div class="register-card">
+    <div class="card shadow-lg border-0">
+      <div class="register-header text-white text-center">
+        <div class="register-icon">
+          <i class="bi bi-person-plus-fill"></i>
+        </div>
+        <h3 class="mb-0 fw-bold">Parent Registration</h3>
+        <p class="mb-0 mt-2 opacity-75">Create an account to manage your child's vaccinations</p>
       </div>
-      <div class="card-body">
+      <div class="register-body">
         <form method="POST">
           {% csrf_token %}
           {{ form.as_p }}
-          <button class="btn btn-success w-100" type="submit">Register</button>
+          <div class="d-grid">
+            <button class="btn btn-success register-btn" type="submit">
+              <i class="bi bi-check-circle me-2"></i>Create Account
+            </button>
+          </div>
         </form>
+      </div>
+      <div class="register-footer">
+        <p class="mb-0">
+          Already have an account? 
+          <a href="{% url 'accounts:parent_login' %}">
+            <i class="bi bi-box-arrow-in-right me-1"></i>Login here
+          </a>
+        </p>
       </div>
     </div>
   </div>

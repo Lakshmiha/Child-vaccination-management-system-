@@ -1,19 +1,253 @@
 {% extends "accounts/base.html" %}
 {% block title %}Book Appointment{% endblock %}
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-6">
-    <div class="card shadow-lg border-0 rounded-4">
-      <div class="card-header bg-success text-white text-center py-3">
-        <h3>Book a Vaccination Appointment</h3>
+<style>
+  .appointment-wrapper {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+  }
+  
+  .appointment-card {
+    max-width: 700px;
+    width: 100%;
+    animation: fadeInUp 0.6s ease;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .appointment-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem;
+    border-radius: 20px 20px 0 0;
+  }
+  
+  .appointment-icon {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  }
+  
+  .appointment-icon i {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .appointment-body {
+    padding: 2.5rem;
+    background: white;
+  }
+  
+  .info-banner {
+    background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+    border-left: 4px solid #00bcd4;
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 2rem;
+  }
+  
+  .info-banner i {
+    font-size: 1.5rem;
+    color: #00bcd4;
+    margin-right: 10px;
+  }
+  
+  .info-banner p {
+    margin: 0;
+    color: #006064;
+  }
+  
+  .appointment-body p {
+    margin-bottom: 0;
+  }
+  
+  .appointment-body p label {
+    font-weight: 500;
+    color: #2C3E50;
+    margin-bottom: 8px;
+    display: block;
+  }
+  
+  .appointment-body input,
+  .appointment-body textarea,
+  .appointment-body select {
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: 2px solid #e0e0e0;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .appointment-body input:focus,
+  .appointment-body textarea:focus,
+  .appointment-body select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+    outline: none;
+  }
+  
+  .appointment-body .helptext {
+    display: block;
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: -1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .appointment-body .errorlist {
+    list-style: none;
+    padding: 0;
+    margin: -1rem 0 1rem 0;
+  }
+  
+  .appointment-body .errorlist li {
+    color: #dc3545;
+    font-size: 0.875rem;
+    padding: 5px 10px;
+    background: #ffe0e0;
+    border-radius: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .submit-btn {
+    padding: 15px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    transition: all 0.3s ease;
+  }
+  
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+  }
+  
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #6c757d;
+    text-decoration: none;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  .back-link:hover {
+    color: #667eea;
+    transform: translateX(-5px);
+  }
+  
+  .appointment-steps {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .step {
+    text-align: center;
+    padding: 1rem;
+    background: #f8f9fa;
+    border-radius: 10px;
+  }
+  
+  .step-number {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 10px;
+    font-weight: 700;
+  }
+  
+  .step-title {
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-weight: 500;
+  }
+  
+  @media (max-width: 768px) {
+    .appointment-steps {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<div class="appointment-wrapper">
+  <div class="appointment-card">
+    <a href="{% url 'accounts:parent_dashboard' %}" class="back-link">
+      <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
+    </a>
+    
+    <div class="card shadow-lg border-0">
+      <div class="appointment-header text-white text-center">
+        <div class="appointment-icon">
+          <i class="bi bi-calendar-plus"></i>
+        </div>
+        <h3 class="mb-0 fw-bold">Book a Vaccination Appointment</h3>
+        <p class="mb-0 mt-2 opacity-75">Schedule your child's vaccination with ease</p>
       </div>
-      <div class="card-body">
+      <div class="appointment-body">
+        <div class="info-banner">
+          <div class="d-flex align-items-start">
+            <i class="bi bi-info-circle-fill"></i>
+            <div>
+              <p class="mb-1"><strong>Important Information:</strong></p>
+              <p class="small mb-0">Please ensure all child information is up to date before booking. You will receive a confirmation once the hospital approves your appointment.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="appointment-steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-title">Select Hospital</div>
+          </div>
+          <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-title">Choose Date & Time</div>
+          </div>
+          <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-title">Confirm Booking</div>
+          </div>
+        </div>
+        
         <form method="POST">
           {% csrf_token %}
           {{ form.as_p }}
-          <button type="submit" class="btn btn-success w-100 mt-3">
-            Confirm Appointment
-          </button>
+          <div class="d-grid">
+            <button type="submit" class="btn btn-success submit-btn">
+              <i class="bi bi-check-circle me-2"></i>Confirm Appointment
+            </button>
+          </div>
         </form>
       </div>
     </div>

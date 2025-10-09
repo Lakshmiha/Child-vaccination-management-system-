@@ -20,7 +20,9 @@ class ParentRegistrationForm(forms.ModelForm):
     def clean_username(self):
         username = self.cleaned_data['username']
         if User.objects.filter(username=username).exists():
-            raise ValidationError("Username already taken.")
+            existing_user = User.objects.get(username=username)
+            if hasattr(existing_user, 'hospital'):
+                raise ValidationError("Username already taken.")
         return username
 
     def clean(self):
@@ -72,7 +74,12 @@ class HospitalRegisterForm(forms.ModelForm):
     def clean_username(self):
         username= self.cleaned_data['username']
         if User.objects.filter(username=username).exists():
-            raise forms.ValidationError("Username already taken.")
+                # Assuming the Parent model is linked by a OneToOne field named 'user'
+                existing_user = User.objects.get(username=username)
+                if hasattr(existing_user, 'parent'):
+                    raise forms.ValidationError("This username is already registered as a Parent.")
+             
+                raise forms.ValidationError("Username already taken.")
         return username
     
     def clean(self):

@@ -1,17 +1,170 @@
 {% extends "accounts/base.html" %}
 {% block title %}Add Child{% endblock %}
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-6">
-    <div class="card shadow-lg">
-      <div class="card-header bg-success text-white text-center">
-        <h3>Add Child</h3>
+<style>
+  .form-wrapper {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+  }
+  
+  .form-card {
+    max-width: 700px;
+    width: 100%;
+    animation: fadeInUp 0.6s ease;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .form-header {
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+    padding: 2rem;
+    border-radius: 20px 20px 0 0;
+  }
+  
+  .form-icon {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  }
+  
+  .form-icon i {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .form-body {
+    padding: 2.5rem;
+    background: white;
+  }
+  
+  .form-body p {
+    margin-bottom: 0;
+  }
+  
+  .form-body p label {
+    font-weight: 500;
+    color: #2C3E50;
+    margin-bottom: 8px;
+    display: block;
+  }
+  
+  .form-body input,
+  .form-body textarea,
+  .form-body select {
+    width: 100%;
+    padding: 12px 20px;
+    border-radius: 10px;
+    border: 2px solid #e0e0e0;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-body input:focus,
+  .form-body textarea:focus,
+  .form-body select:focus {
+    border-color: #56ab2f;
+    box-shadow: 0 0 0 0.2rem rgba(86, 171, 47, 0.15);
+    outline: none;
+  }
+  
+  .form-body .helptext {
+    display: block;
+    font-size: 0.875rem;
+    color: #6c757d;
+    margin-top: -1rem;
+    margin-bottom: 1rem;
+  }
+  
+  .form-body .errorlist {
+    list-style: none;
+    padding: 0;
+    margin: -1rem 0 1rem 0;
+  }
+  
+  .form-body .errorlist li {
+    color: #dc3545;
+    font-size: 0.875rem;
+    padding: 5px 10px;
+    background: #ffe0e0;
+    border-radius: 5px;
+    margin-bottom: 5px;
+  }
+  
+  .submit-btn {
+    padding: 15px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+    border: none;
+    transition: all 0.3s ease;
+  }
+  
+  .submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(86, 171, 47, 0.4);
+  }
+  
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #6c757d;
+    text-decoration: none;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  .back-link:hover {
+    color: #56ab2f;
+    transform: translateX(-5px);
+  }
+</style>
+
+<div class="form-wrapper">
+  <div class="form-card">
+    <a href="{% url 'accounts:parent_dashboard' %}" class="back-link">
+      <i class="bi bi-arrow-left-circle"></i> Back to Dashboard
+    </a>
+    
+    <div class="card shadow-lg border-0">
+      <div class="form-header text-white text-center">
+        <div class="form-icon">
+          <i class="bi bi-person-plus-fill"></i>
+        </div>
+        <h3 class="mb-0 fw-bold">Add New Child</h3>
+        <p class="mb-0 mt-2 opacity-75">Register your child for vaccination management</p>
       </div>
-      <div class="card-body">
+      <div class="form-body">
         <form method="POST">
           {% csrf_token %}
           {{ form.as_p }}
-          <button type="submit" class="btn btn-success w-100">Save</button>
+          <div class="d-grid">
+            <button type="submit" class="btn btn-success submit-btn">
+              <i class="bi bi-check-circle me-2"></i>Save Child Information
+            </button>
+          </div>
         </form>
       </div>
     </div>

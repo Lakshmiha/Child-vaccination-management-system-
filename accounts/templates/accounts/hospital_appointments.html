@@ -1,0 +1,96 @@
+{% extends "accounts/base.html" %}
+{% block title %}Hospital Appointments{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4 text-primary">Appointments for {{ hospital.name }}</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <!-- 1. PENDING APPOINTMENTS (ACTION REQUIRED) -->
+    <div class="card shadow mb-5 border-warning">
+        <div class="card-header bg-warning text-dark">
+            <h4 class="mb-0"><i class="fas fa-exclamation-triangle"></i> Appointments Awaiting Confirmation ({{ pending_appointments|length }})</h4>
+            <small>Staff must review and approve these bookings before they are finalized.</small>
+        </div>
+        <div class="card-body">
+            {% if pending_appointments %}
+                <table class="table table-bordered table-striped text-center">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Child</th>
+                            <th>Parent</th>
+                            <th>Time Slot</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appt in pending_appointments %}
+                        <tr>
+                            <td>{{ appt.child.name }}</td>
+                            <td>{{ appt.parent.user.username }}</td>
+                            <!-- CRITICAL FIX: Date and Time come from the slot object -->
+                            <td>{{ appt.slot.date|date:"M d" }} at {{ appt.slot.start_time|time:"g:i A" }}</td>
+                            <td><span class="badge bg-warning text-dark">PENDING</span></td>
+                            <td>
+                                <!-- Form action for confirmation -->
+                                <form method="post" action="{% url 'accounts:hospital_confirm_appointment' appt.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        <i class="fas fa-check"></i> Approve
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-success text-center mb-0">No new appointments are pending approval.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- 2. CONFIRMED APPOINTMENTS (SCHEDULE) -->
+    <div class="card shadow">
+        <div class="card-header bg-success text-white">
+            <h4 class="mb-0"><i class="fas fa-calendar-alt"></i> Confirmed Schedule ({{ confirmed_appointments|length }})</h4>
+        </div>
+        <div class="card-body">
+            {% if confirmed_appointments %}
+            <table class="table table-bordered text-center">
+                <thead class="table-success">
+                    <tr>
+                        <th>Child</th>
+                        <th>Parent</th>
+                        <th>Time Slot</th>
+                        <!-- Placeholder for the vaccine field - you will need to fill this based on child's schedule -->
+                        <th>Vaccine Goal</th> 
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for appt in confirmed_appointments %}
+                    <tr>
+                        <td>{{ appt.child.name }}</td>
+                        <td>{{ appt.parent.user.username }}</td>
+                        <td>{{ appt.slot.date|date:"M d, Y" }} at {{ appt.slot.start_time|time:"g:i A" }}</td>
+                        <!-- Placeholder: Displays a message until you link the scheduling logic -->
+                        <td>Needs Scheduling Logic</td>
+                        <td><span class="badge bg-success">CONFIRMED</span></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                <p class="text-muted text-center">No confirmed appointments scheduled.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,49 +1,372 @@
 {% extends "accounts/base.html" %}
 {% block title %}View Appointments{% endblock %}
 {% block content %}
-<div class="container mt-5">
-  <div class="card shadow-lg">
-    <div class="card-header bg-primary text-white text-center">
-      <h3>Your Booked Appointments</h3>
+<style>
+  .page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  }
+  
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .header-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .header-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+  }
+  
+  .book-btn {
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-weight: 600;
+    background: white;
+    color: #667eea;
+    border: none;
+    transition: all 0.3s ease;
+  }
+  
+  .book-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    color: #667eea;
+  }
+  
+  .appointments-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  }
+  
+  .table-responsive {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+  }
+  
+  .table {
+    margin-bottom: 0;
+  }
+  
+  .table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+  
+  .table thead th {
+    border: none;
+    padding: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+  }
+  
+  .table tbody td {
+    padding: 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .table tbody tr {
+    transition: all 0.3s ease;
+  }
+  
+  .table tbody tr:hover {
+    background: linear-gradient(90deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    transform: scale(1.01);
+  }
+  
+  .table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .child-info {
+    font-weight: 600;
+    color: #2C3E50;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  
+  .hospital-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #6c757d;
+  }
+  
+  .status-badge {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .status-approved {
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+    color: white;
+  }
+  
+  .status-pending {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    color: white;
+  }
+  
+  .status-cancelled {
+    background: linear-gradient(135deg, #FF6B6B 0%, #E74C3C 100%);
+    color: white;
+  }
+  
+  .status-completed {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+  }
+  
+  .date-time-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .date-info {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #2C3E50;
+    font-weight: 500;
+  }
+  
+  .time-info {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+  
+  .empty-state i {
+    font-size: 5rem;
+    color: #e0e0e0;
+    margin-bottom: 1.5rem;
+  }
+  
+  .empty-state h4 {
+    color: #6c757d;
+    margin-bottom: 1rem;
+  }
+  
+  .empty-state p {
+    color: #9ca3af;
+    margin-bottom: 2rem;
+  }
+  
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .stat-box {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 1.5rem;
+    border-radius: 15px;
+    text-align: center;
+    transition: all 0.3s ease;
+  }
+  
+  .stat-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  }
+  
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2C3E50;
+  }
+  
+  .stat-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+  
+  @media (max-width: 768px) {
+    .header-content {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .book-btn {
+      width: 100%;
+    }
+    
+    .table {
+      font-size: 0.85rem;
+    }
+    
+    .status-badge {
+      padding: 6px 12px;
+      font-size: 0.75rem;
+    }
+  }
+</style>
+
+<div class="page-header">
+  <div class="header-content">
+    <div class="header-title">
+      <div class="header-icon">
+        <i class="bi bi-calendar-check"></i>
+      </div>
+      <div>
+        <h2 class="mb-0">Your Appointments</h2>
+        <p class="mb-0 opacity-75">View and manage vaccination appointments</p>
+      </div>
     </div>
-    <div class="card-body">
-      {% if appointments %}
-        <table class="table table-striped text-center align-middle">
-          <thead class="table-dark">
-            <tr>
-              <th>Child</th>
-              <th>Hospital</th>
-              <th>Vaccine</th>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {% for appt in appointments %}
-              <tr>
-                <td>{{ appt.child.name }}</td>
-                <td>{{ appt.hospital.name }}</td>
-                <td>{{ appt.vaccine.name }}</td>
-                <td>{{ appt.date }}</td>
-                <td>{{ appt.time }}</td>
-                <td>
-                  {% if a.status == "Approved" %}
-                    <span class="badge bg-success">{{ appt.status }}</span>
-                  {% elif a.status == "Pending" %}
-                    <span class="badge bg-warning text-dark">{{ appt.status }}</span>
-                  {% else %}
-                    <span class="badge bg-secondary">{{ appt.status }}</span>
-                  {% endif %}
-                </td>
-              </tr>
-            {% endfor %}
-          </tbody>
-        </table>
-      {% else %}
-        <p class="text-center text-muted">No appointments booked yet.</p>
-      {% endif %}
-    </div>
+    <a href="{% url 'accounts:book_appointment' %}" class="btn book-btn">
+      <i class="bi bi-calendar-plus me-2"></i>Book New Appointment
+    </a>
   </div>
 </div>
+
+{% if appointments %}
+  <div class="stats-row">
+    <div class="stat-box">
+      <div class="stat-value">{{ appointments|length }}</div>
+      <div class="stat-label">Total Appointments</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-value">
+        {% with pending=0 %}
+          {% for appt in appointments %}
+            {% if appt.status == "Pending" %}
+              {{ pending|add:1 }}
+            {% endif %}
+          {% endfor %}
+        {% endwith %}
+        0
+      </div>
+      <div class="stat-label">Pending</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-value">
+        {% with approved=0 %}
+          {% for appt in appointments %}
+            {% if appt.status == "Approved" %}
+              {{ approved|add:1 }}
+            {% endif %}
+          {% endfor %}
+        {% endwith %}
+        0
+      </div>
+      <div class="stat-label">Approved</div>
+    </div>
+  </div>
+
+  <div class="appointments-card">
+    <div class="table-responsive">
+      <table class="table">
+        <thead>
+          <tr>
+            <th><i class="bi bi-person me-2"></i>Child</th>
+            <th><i class="bi bi-hospital me-2"></i>Hospital</th>
+            <th><i class="bi bi-calendar3 me-2"></i>Date & Time</th>
+            <th class="text-center"><i class="bi bi-flag me-2"></i>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for appt in appointments %}
+          <tr>
+            <td>
+              <div class="child-info">
+                <i class="bi bi-person-badge text-primary"></i>
+                {{ appt.child_name }}
+              </div>
+            </td>
+            <td>
+              <div class="hospital-info">
+                <i class="bi bi-hospital"></i>
+                {{ appt.hospital.name }}
+              </div>
+            </td>
+            <td>
+              <div class="date-time-info">
+                <div class="date-info">
+                  <i class="bi bi-calendar3"></i>
+                  {{ appt.appointment_date }}
+                </div>
+                <div class="time-info">
+                  <i class="bi bi-clock"></i>
+                  {{ appt.appointment_time }}
+                </div>
+              </div>
+            </td>
+            <td class="text-center">
+              {% if appt.status == "Approved" %}
+                <span class="status-badge status-approved">
+                  <i class="bi bi-check-circle"></i> {{ appt.status }}
+                </span>
+              {% elif appt.status == "Pending" %}
+                <span class="status-badge status-pending">
+                  <i class="bi bi-clock-history"></i> {{ appt.status }}
+                </span>
+              {% elif appt.status == "Cancelled" %}
+                <span class="status-badge status-cancelled">
+                  <i class="bi bi-x-circle"></i> {{ appt.status }}
+                </span>
+              {% else %}
+                <span class="status-badge status-completed">
+                  <i class="bi bi-check-circle"></i> {{ appt.status }}
+                </span>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+{% else %}
+  <div class="appointments-card">
+    <div class="empty-state">
+      <i class="bi bi-calendar-x"></i>
+      <h4>No Appointments Yet</h4>
+      <p>You haven't booked any vaccination appointments. Start by scheduling your first appointment!</p>
+      <a href="{% url 'accounts:book_appointment' %}" class="btn btn-primary btn-lg">
+        <i class="bi bi-calendar-plus me-2"></i>Book Your First Appointment
+      </a>
+    </div>
+  </div>
+{% endif %}
 {% endblock %}

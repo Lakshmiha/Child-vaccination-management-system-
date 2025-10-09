@@ -1,25 +1,146 @@
 {% extends "accounts/base.html" %}
-{% block title %}Login{% endblock %}
+{% block title %}Parent Login{% endblock %}
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-5">
-    <div class="card shadow">
-      <div class="card-header bg-primary text-white">
-        <h4 class="mb-0">Parent Login</h4>
+<style>
+  .login-wrapper {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .login-card {
+    max-width: 500px;
+    width: 100%;
+    animation: fadeInUp 0.6s ease;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .login-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 2rem;
+    border-radius: 20px 20px 0 0;
+  }
+  
+  .login-icon {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  }
+  
+  .login-icon i {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .login-body {
+    padding: 2.5rem;
+    background: white;
+  }
+  
+  .form-floating {
+    margin-bottom: 1.5rem;
+  }
+  
+  .form-floating .form-control {
+    border-radius: 10px;
+    border: 2px solid #e0e0e0;
+  }
+  
+  .form-floating .form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.15);
+  }
+  
+  .login-btn {
+    padding: 15px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    transition: all 0.3s ease;
+  }
+  
+  .login-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+  }
+  
+  .login-footer {
+    padding: 1.5rem;
+    background: #f8f9fa;
+    border-radius: 0 0 20px 20px;
+    text-align: center;
+  }
+  
+  .login-footer a {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+  }
+  
+  .login-footer a:hover {
+    text-decoration: underline;
+  }
+</style>
+
+<div class="login-wrapper">
+  <div class="login-card">
+    <div class="card shadow-lg border-0">
+      <div class="login-header text-white text-center">
+        <div class="login-icon">
+          <i class="bi bi-person-circle"></i>
+        </div>
+        <h3 class="mb-0 fw-bold">Parent Login</h3>
+        <p class="mb-0 mt-2 opacity-75">Welcome back! Please login to your account</p>
       </div>
-      <div class="card-body">
+      <div class="login-body">
         <form method="POST" action="{% url 'accounts:parent_login' %}">
           {% csrf_token %}
-          <div class="mb-3">
-            <label>Username</label>
-            <input type="text" name="username" class="form-control" required>
+          
+          <div class="form-floating">
+            <input type="text" name="username" class="form-control" id="username" placeholder="Username" required>
+            <label for="username"><i class="bi bi-person me-2"></i>Username</label>
           </div>
-          <div class="mb-3">
-            <label>Password</label>
-            <input type="password" name="password" class="form-control" required>
+          
+          <div class="form-floating">
+            <input type="password" name="password" class="form-control" id="password" placeholder="Password" required>
+            <label for="password"><i class="bi bi-lock me-2"></i>Password</label>
           </div>
-          <button class="btn btn-primary w-100" type="submit">Login</button>
+          
+          <div class="d-grid">
+            <button class="btn btn-primary login-btn" type="submit">
+              <i class="bi bi-box-arrow-in-right me-2"></i>Login to Dashboard
+            </button>
+          </div>
         </form>
+      </div>
+      <div class="login-footer">
+        <p class="mb-0">
+          Don't have an account? 
+          <a href="{% url 'accounts:parent_register' %}">
+            <i class="bi bi-person-plus me-1"></i>Register here
+          </a>
+        </p>
       </div>
     </div>
   </div>

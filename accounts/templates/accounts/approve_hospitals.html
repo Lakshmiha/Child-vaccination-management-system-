@@ -1,30 +1,321 @@
 {% extends "accounts/base.html" %}
+{% block title %}Approve Hospitals{% endblock %}
 {% block content %}
-<div class="container mt-4">
-  <h2>Hospitals Awaiting Approval</h2>
+<style>
+  .admin-header {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  }
+  
+  .header-content {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  .header-icon {
+    width: 70px;
+    height: 70px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+  }
+  
+  .admin-badge {
+    background: rgba(255,255,255,0.3);
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 10px;
+  }
+  
+  .hospitals-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #2C3E50;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .table-responsive {
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+  }
+  
+  .table {
+    margin-bottom: 0;
+  }
+  
+  .table thead {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+  }
+  
+  .table thead th {
+    border: none;
+    padding: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+  }
+  
+  .table tbody td {
+    padding: 1.5rem 1rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .table tbody tr {
+    transition: all 0.3s ease;
+  }
+  
+  .table tbody tr:hover {
+    background: linear-gradient(90deg, rgba(240, 147, 251, 0.05) 0%, rgba(245, 87, 108, 0.05) 100%);
+    transform: scale(1.01);
+  }
+  
+  .table tbody tr:last-child td {
+    border-bottom: none;
+  }
+  
+  .hospital-name {
+    font-weight: 600;
+    color: #2C3E50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+  }
+  
+  .hospital-icon {
+    width: 45px;
+    height: 45px;
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.3rem;
+  }
+  
+  .approve-btn {
+    padding: 12px 30px;
+    border-radius: 10px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+    border: none;
+    transition: all 0.3s ease;
+    color: white;
+  }
+  
+  .approve-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(86, 171, 47, 0.4);
+    color: white;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+  }
+  
+  .empty-state i {
+    font-size: 5rem;
+    color: #e0e0e0;
+    margin-bottom: 1.5rem;
+  }
+  
+  .empty-state h4 {
+    color: #6c757d;
+    margin-bottom: 1rem;
+  }
+  
+  .empty-state p {
+    color: #9ca3af;
+  }
+  
+  .pending-badge {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .stats-banner {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1.5rem;
+    border-radius: 15px;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .stats-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .stats-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+  }
+  
+  .stats-text h3 {
+    margin: 0;
+    font-size: 2rem;
+    font-weight: 700;
+  }
+  
+  .stats-text p {
+    margin: 0;
+    opacity: 0.9;
+  }
+  
+  @media (max-width: 768px) {
+    .header-content {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .table {
+      font-size: 0.85rem;
+    }
+    
+    .hospital-name {
+      font-size: 1rem;
+    }
+    
+    .approve-btn {
+      padding: 10px 20px;
+      font-size: 0.9rem;
+    }
+  }
+</style>
+
+<div class="admin-header">
+  <div class="header-content">
+    <div class="header-icon">
+      <i class="bi bi-shield-check"></i>
+    </div>
+    <div>
+      <h2 class="mb-0">Hospital Approval Management</h2>
+      <p class="mb-0 opacity-75">Review and approve hospital registrations</p>
+      <div class="admin-badge">
+        <i class="bi bi-star-fill me-1"></i> Administrator Access
+      </div>
+    </div>
+  </div>
+</div>
+
 {% if hospitals %}
-    <table>
+  <div class="stats-banner">
+    <div class="stats-info">
+      <div class="stats-icon">
+        <i class="bi bi-hourglass-split"></i>
+      </div>
+      <div class="stats-text">
+        <h3>{{ hospitals|length }}</h3>
+        <p>Pending Approval{% if hospitals|length != 1 %}s{% endif %}</p>
+      </div>
+    </div>
+    <div>
+      <i class="bi bi-info-circle me-2"></i>
+      <span class="opacity-75">Review each hospital carefully before approval</span>
+    </div>
+  </div>
+
+  <div class="hospitals-card">
+    <h5 class="section-title">
+      <i class="bi bi-hospital text-danger"></i>
+      Hospitals Awaiting Approval
+    </h5>
+    
+    <div class="table-responsive">
+      <table class="table">
         <thead>
-            <tr>
-                <th>Hospital Name</th>
-                <th>Action</th>
-            </tr>
+          <tr>
+            <th><i class="bi bi-hospital me-2"></i>Hospital Name</th>
+            <th><i class="bi bi-flag me-2"></i>Status</th>
+            <th class="text-center"><i class="bi bi-gear me-2"></i>Action</th>
+          </tr>
         </thead>
         <tbody>
-            {% for hospital in hospitals %}
-            <tr>
-                <td>{{ hospital.name }}</td>
-                <td>
-                    <form method="post" action="{% url 'accounts:approve_hospital' hospital.id %}">
-                        {% csrf_token %} <button type="submit" class="btn-success">Approve Hospital</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
+          {% for hospital in hospitals %}
+          <tr>
+            <td>
+              <div class="hospital-name">
+                <div class="hospital-icon">
+                  <i class="bi bi-hospital"></i>
+                </div>
+                <div>
+                  {{ hospital.name }}
+                  <div class="text-muted small">{{ hospital.address|default:"No address provided" }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="pending-badge">
+                <i class="bi bi-clock-history"></i> Pending Review
+              </span>
+            </td>
+            <td class="text-center">
+              <form method="post" action="{% url 'accounts:approve_hospital' hospital.id %}" style="display: inline;">
+                {% csrf_token %}
+                <button type="submit" class="btn approve-btn">
+                  <i class="bi bi-check-circle me-2"></i>Approve Hospital
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
         </tbody>
-    </table>
+      </table>
+    </div>
+  </div>
 {% else %}
-    <p>No hospitals are currently awaiting approval. 🎉</p>
+  <div class="hospitals-card">
+    <div class="empty-state">
+      <i class="bi bi-check-circle"></i>
+      <h4>All Clear!</h4>
+      <p>No hospitals are currently awaiting approval. 🎉</p>
+    </div>
+  </div>
 {% endif %}
-</div>
 {% endblock %}

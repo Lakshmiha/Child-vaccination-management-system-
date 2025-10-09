@@ -6,152 +6,474 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Child Vaccination Management System</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        /* Simple custom styles to enhance the look without external images */
-        .header-section {
-            background: linear-gradient(135deg,#007bff 0%,#0056b3 100%); /* Primary Blue for health/trust */
-            color: white;
-            padding: 100px 0;
-            min-height:80vh;
-            dispaly:flex;
-            align-items:center;
-        }
-        .cta-section{
-            padding:60px 0;
-            background-color:#f8f9fa;
-        }
-        .feature-icon{
-            font-size:2.5rem;
-            color;#007bff;
-            margin-bottom:15px;
-        }
-        .card-link{
-            transition:transform 0.3s ease-in-out,box-shadow 0.3s ease-in-out;
-            cursor:pointer;
-            height:100%;
-        }
-        .card-link:hover{
-            transform:translateY(-5px);
-            box-shadow:0 10px 20px rgba(0,0,0,0.1);
+        * {
+            font-family: 'Poppins', sans-serif;
         }
         
+        body {
+            overflow-x: hidden;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 120px 0;
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.1;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            animation: fadeInUp 1s ease;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.95;
+            animation: fadeInUp 1s ease 0.2s both;
+        }
+        
+        .hero-buttons {
+            animation: fadeInUp 1s ease 0.4s both;
+        }
+        
+        .hero-btn {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+            margin: 10px;
+        }
+        
+        .hero-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        
+        .hero-btn-primary {
+            background: white;
+            color: #667eea;
+        }
+        
+        .hero-btn-outline {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Features Section */
+        .features-section {
+            padding: 80px 0;
+            background: linear-gradient(to bottom, #f8f9fa, #ffffff);
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 3rem;
+            color: #2C3E50;
+            position: relative;
+            display: inline-block;
+        }
+        
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            height: 100%;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            cursor: pointer;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        
+        .feature-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1.5rem;
+            display: inline-block;
+            animation: bounce 2s infinite;
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #2C3E50;
+        }
+        
+        .feature-description {
+            color: #6c757d;
+            line-height: 1.8;
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            padding: 80px 0;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        }
+        
+        .cta-card {
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            height: 100%;
+        }
+        
+        .cta-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+        
+        .cta-card-header {
+            padding: 2rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .cta-card-body {
+            padding: 2rem;
+            background: white;
+        }
+        
+        .cta-btn {
+            padding: 12px 35px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        .cta-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        
+        .gradient-purple {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .gradient-green {
+            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+        }
+        
+        .gradient-blue {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+        
+        .gradient-orange {
+            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+        
+        /* Footer */
+        footer {
+            background: linear-gradient(135deg, #2C3E50 0%, #34495e 100%);
+            color: white;
+            padding: 30px 0;
+        }
+        
+        footer a {
+            color: #a8dadc;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+        
+        footer a:hover {
+            color: #f1faee;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.2rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .hero-btn {
+                padding: 12px 30px;
+                font-size: 1rem;
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+        }
+        
+        /* Scroll Animation */
+        .animate-on-scroll {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+        
+        .animate-on-scroll.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
     </style>
 </head>
 <body>
 
-    <header class="header-section">
-        <div class="container text-center">
-            <!--<img 
-                src="{% static 'accounts/images/logo.png' %}" 
-                alt="MES College Logo" 
-                style="height: 100px; margin-bottom: 20px;"
-        >-->
-            <h1 class="display-3 fw-bold">CHILD VACCINATION MANAGEMENT SYSTEM</h1>
-            <p class="lead mt-4 mb-5">
-                Digitizing records and ensuring timely immunization for a healthier future.
-            </p>
-            <a href="{% url 'accounts:parent_register' %}" class="btn btn-warning btn-lg me-3 shadow-lg">
-                Register your child now
-            </a>
-            <a href="#features" class="btn btn-outline-light btn-lg">
-                Learn More
-            </a>
+    <!-- Hero Section -->
+    <header class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-12 text-center hero-content">
+                    <h1 class="hero-title">
+                        <i class="bi bi-heart-pulse-fill me-3"></i>
+                        Child Vaccination Management System
+                    </h1>
+                    <p class="hero-subtitle">
+                        Digitizing records and ensuring timely immunization for a healthier future.<br>
+                        Protecting children, one vaccine at a time.
+                    </p>
+                    <div class="hero-buttons">
+                        <a href="{% url 'accounts:parent_register' %}" class="btn hero-btn hero-btn-primary">
+                            <i class="bi bi-person-plus-fill me-2"></i>Register Your Child Now
+                        </a>
+                        <a href="#features" class="btn hero-btn hero-btn-outline">
+                            <i class="bi bi-arrow-down-circle me-2"></i>Learn More
+                        </a>
+                    </div>
+                </div>
+            </div>
         </div>
     </header>
 
-    <section id="features" class="container py-5">
-        <h2 class="text-center mb-5 fw-fold">Transforming Child Healthcare Management</h2>
-        <div class="row text-center">
-            
-            <div class="col-md-4 mb-4">
-                <div class="card card-link p-3">
-                    <div class="feature-icon">📅</div>
-                    <h3 class="h5 card-title">🔔 Automated Reminders</h3>
-                    [cite_start]<p class="card-text">Receive timely email/SMS reminders for upcoming vaccines, eliminating missed doses[cite: 36, 49, 84]..</p>
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <div class="text-center mb-5">
+                <h2 class="section-title">Transforming Child Healthcare Management</h2>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4 animate-on-scroll">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon">📅</div>
+                        <h3 class="feature-title">
+                            <i class="bi bi-bell-fill text-warning me-2"></i>Automated Reminders
+                        </h3>
+                        <p class="feature-description">
+                            Receive timely email/SMS reminders for upcoming vaccines, eliminating missed doses and ensuring your child stays on schedule.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4 animate-on-scroll">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon">🛡️</div>
+                        <h3 class="feature-title">
+                            <i class="bi bi-shield-check text-success me-2"></i>Digital & Secure Records
+                        </h3>
+                        <p class="feature-description">
+                            Replace paper-based systems prone to loss and errors. Digitize and centralize vaccination records for easy access and management.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4 animate-on-scroll">
+                    <div class="feature-card text-center">
+                        <div class="feature-icon">🏥</div>
+                        <h3 class="feature-title">
+                            <i class="bi bi-calendar-check text-primary me-2"></i>Online Appointment Booking
+                        </h3>
+                        <p class="feature-description">
+                            Enable parents to easily book vaccination appointments with hospitals directly through the web app with real-time availability.
+                        </p>
+                    </div>
                 </div>
             </div>
-
-            <div class="col-md-4 mb-4">
-                <div class="card\ card-link p-3">
-                    <div class="feature-icon">🛡️</div>
-                    <h3 class="h5 card-title">✅ Digital & Secure Records</h3>
-                    [cite_start]<p class="card-text">Replaces paper-based systems prone to loss and errors[cite: 56]. Digitize and centralize vaccination records for easy access and management[cite: 47, 48].</p>
-                </div>
-            </div>
-
-            <div class="col-md-4 mb-4">
-                <div class="card card-link p-3">
-                    <div class="feature-icon">🏥</div>
-                    <h3 class="h5 card-title">📅 Online Appointment Booking</h3>
-                    [cite_start]<p class="card-text">Enables parents to easily book vaccination appointments with hospitals directly through the web app[cite: 36, 49, 68].</p>
-                </div>
-            </div>
-
         </div>
     </section>
     
+    <!-- CTA Section -->
     <section class="cta-section">
         <div class="container">
-            <h2 class="text-center mb-5 fw-bold">Ready to Get Started?</h2>
-                <div class="row">
-                    <div class="col-md-6 mb-4">
-                        <div class="card p-4 text-center border-primary shadow">
-                            <h3 class="card-title text-primary">Parent Portal</h3>
-                            <p class="card-text">Access your child's schedule, history, and book new appointments.</p>
-                            <a href="{% url 'accounts:parent_login' %}" class="btn btn-primary btn-lg mt-3">
-                                Parent Login
-                            </a>
+            <div class="text-center mb-5">
+                <h2 class="section-title">Ready to Get Started?</h2>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-6 animate-on-scroll">
+                    <div class="cta-card">
+                        <div class="cta-card-header gradient-purple text-white text-center">
+                            <i class="bi bi-person-circle display-4 mb-3"></i>
+                            <h3>Parent Portal</h3>
                         </div>
-                    </div>
-
-                    <div class="col-md-6 mb-4">
-                        <div class="card p-4 text-center border-success shadow">
-                            <h3 class="card-title text-success">Hospital & Admin Access</h3>
-                            <p class="card-text">Manage vaccination records, appointments, and system oversight.</p>
-                            <div class="d-flex justify-content-center flex-wrap">
-                            <a href="{% url 'accounts:hospital_register' %}" class="btn btn-success mt-3 mx-2">
-                                Hospital Register
+                        <div class="cta-card-body text-center">
+                            <p class="mb-4">Access your child's schedule, history, and book new appointments.</p>
+                            <a href="{% url 'accounts:parent_login' %}" class="btn btn-primary cta-btn">
+                                <i class="bi bi-box-arrow-in-right me-2"></i>Parent Login
                             </a>
-                            <a href="{% url 'accounts:hospital_login' %}" class="btn btn-outline-success mt-3 mx-2">
-                                Hospital Login
-                            </a>
-                        </div>
-                    </div>
-                    <div class="row mt-5">
-                    <div class="col-md-6 mb-4">
-                        <div class="card p-4 text-center border-info shadow">
-                            <h3 class="card-title text-info">📅 Book Appointment</h3>
-                            <p class="card-text">Schedule a vaccination appointment with your preferred hospital easily.</p>
-                            <a href="{% url 'accounts:book_appointment' %}" class="btn btn-info btn-lg mt-3">
-                                Book Appointment
-                            </a>
-                        </div>
-                    </div>
-
-                    <div class="col-md-6 mb-4">
-                        <div class="card p-4 text-center border-warning shadow">
-                            <h3 class="card-title text-warning">🩺 View Appointments</h3>
-                                <p class="card-text">Check your upcoming vaccination appointments and their status.</p>
-                                <a href="{% url 'accounts:view_appointments' %}" class="btn btn-warning btn-lg mt-3">
-                                    View My Appointments
-                                </a>
                         </div>
                     </div>
                 </div>
 
+                <div class="col-md-6 animate-on-scroll">
+                    <div class="cta-card">
+                        <div class="cta-card-header gradient-green text-white text-center">
+                            <i class="bi bi-hospital display-4 mb-3"></i>
+                            <h3>Hospital & Admin Access</h3>
+                        </div>
+                        <div class="cta-card-body text-center">
+                            <p class="mb-4">Manage vaccination records, appointments, and system oversight.</p>
+                            <div class="d-flex justify-content-center gap-2 flex-wrap">
+                                <a href="{% url 'accounts:hospital_register' %}" class="btn btn-success cta-btn">
+                                    <i class="bi bi-building-add me-2"></i>Register
+                                </a>
+                                <a href="{% url 'accounts:hospital_login' %}" class="btn btn-outline-success cta-btn">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 animate-on-scroll">
+                    <div class="cta-card">
+                        <div class="cta-card-header gradient-blue text-white text-center">
+                            <i class="bi bi-calendar-plus display-4 mb-3"></i>
+                            <h3>Book Appointment</h3>
+                        </div>
+                        <div class="cta-card-body text-center">
+                            <p class="mb-4">Schedule a vaccination appointment with your preferred hospital easily.</p>
+                            <a href="{% url 'accounts:book_appointment' %}" class="btn btn-info cta-btn">
+                                <i class="bi bi-calendar-check me-2"></i>Book Now
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-6 animate-on-scroll">
+                    <div class="cta-card">
+                        <div class="cta-card-header gradient-orange text-white text-center">
+                            <i class="bi bi-clipboard-check display-4 mb-3"></i>
+                            <h3>View Appointments</h3>
+                        </div>
+                        <div class="cta-card-body text-center">
+                            <p class="mb-4">Check your upcoming vaccination appointments and their status.</p>
+                            <a href="{% url 'accounts:view_appointments' %}" class="btn btn-warning cta-btn">
+                                <i class="bi bi-eye me-2"></i>View Appointments
+                            </a>
+                        </div>
+                    </div>
                 </div>
             </div>
-        
-        <div class="text-center mt-4">
-            <a href="" class="text-muted small">System Administrator Access</a>
         </div>
-    </div>
     </section>
     
-    <footer class="text-center text-muted py-3 small bg-dark text-light">
-        &copy; 2025 Child Vaccination Management System. Built with Django.
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="container">
+            <p class="mb-2">
+                <i class="bi bi-shield-heart me-2"></i>
+                &copy; 2025 Child Vaccination Management System
+            </p>
+            <p class="small">
+                Built with <i class="bi bi-heart-fill text-danger"></i> using Django & Bootstrap
+            </p>
+        </div>
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Scroll Animation
+        const animateOnScroll = () => {
+            const elements = document.querySelectorAll('.animate-on-scroll');
+            elements.forEach(element => {
+                const elementTop = element.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                if (elementTop < windowHeight - 100) {
+                    element.classList.add('show');
+                }
+            });
+        };
+        
+        window.addEventListener('scroll', animateOnScroll);
+        window.addEventListener('load', animateOnScroll);
+        
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>

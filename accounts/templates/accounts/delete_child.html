@@ -1,18 +1,177 @@
 {% extends "accounts/base.html" %}
 {% block title %}Delete Child{% endblock %}
 {% block content %}
-<div class="row justify-content-center">
-  <div class="col-md-6">
-    <div class="card shadow-lg">
-      <div class="card-header bg-danger text-white text-center">
-        <h3>Delete Child</h3>
+<style>
+  .delete-wrapper {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+  }
+  
+  .delete-card {
+    max-width: 550px;
+    width: 100%;
+    animation: fadeInUp 0.6s ease;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .delete-header {
+    background: linear-gradient(135deg, #FF6B6B 0%, #E74C3C 100%);
+    padding: 2rem;
+    border-radius: 20px 20px 0 0;
+  }
+  
+  .delete-icon {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  }
+  
+  .delete-icon i {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #FF6B6B 0%, #E74C3C 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .delete-body {
+    padding: 2.5rem;
+    background: white;
+    text-align: center;
+  }
+  
+  .warning-message {
+    background: linear-gradient(135deg, #fff5f5 0%, #ffe0e0 100%);
+    border-left: 4px solid #dc3545;
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    text-align: left;
+  }
+  
+  .warning-message i {
+    font-size: 2rem;
+    color: #dc3545;
+    margin-bottom: 1rem;
+  }
+  
+  .child-info {
+    background: #f8f9fa;
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+  }
+  
+  .child-info h5 {
+    color: #2C3E50;
+    font-weight: 600;
+    font-size: 1.3rem;
+  }
+  
+  .delete-btn {
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #FF6B6B 0%, #E74C3C 100%);
+    border: none;
+    transition: all 0.3s ease;
+    margin-right: 10px;
+  }
+  
+  .delete-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 107, 107, 0.4);
+  }
+  
+  .cancel-btn {
+    padding: 15px 40px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    background: #6c757d;
+    border: none;
+    transition: all 0.3s ease;
+  }
+  
+  .cancel-btn:hover {
+    background: #5a6268;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(108, 117, 125, 0.4);
+  }
+  
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #6c757d;
+    text-decoration: none;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  .back-link:hover {
+    color: #dc3545;
+    transform: translateX(-5px);
+  }
+</style>
+
+<div class="delete-wrapper">
+  <div class="delete-card">
+    <a href="{% url 'accounts:view_children' %}" class="back-link">
+      <i class="bi bi-arrow-left-circle"></i> Back to Children List
+    </a>
+    
+    <div class="card shadow-lg border-0">
+      <div class="delete-header text-white text-center">
+        <div class="delete-icon">
+          <i class="bi bi-exclamation-triangle-fill"></i>
+        </div>
+        <h3 class="mb-0 fw-bold">Confirm Deletion</h3>
+        <p class="mb-0 mt-2 opacity-75">This action cannot be undone</p>
       </div>
-      <div class="card-body text-center">
-        <p>Are you sure you want to delete <strong>{{ child.name }}</strong>?</p>
-        <form method="POST">
+      <div class="delete-body">
+        <div class="warning-message">
+          <div class="text-center">
+            <i class="bi bi-shield-exclamation"></i>
+          </div>
+          <h6 class="mb-2"><strong>Warning!</strong></h6>
+          <p class="mb-0 small">Deleting this child will permanently remove all associated records, including vaccination history and appointments.</p>
+        </div>
+        
+        <div class="child-info">
+          <p class="text-muted mb-2 small">You are about to delete:</p>
+          <h5><i class="bi bi-person-badge me-2"></i>{{ child.name }}</h5>
+        </div>
+        
+        <p class="mb-4">Are you sure you want to proceed with this deletion?</p>
+        
+        <form method="POST" style="display: inline;">
           {% csrf_token %}
-          <button type="submit" class="btn btn-danger">Yes, Delete</button>
-          <a href="{% url 'accounts:view_children' %}" class="btn btn-secondary">Cancel</a>
+          <button type="submit" class="btn btn-danger delete-btn">
+            <i class="bi bi-trash me-2"></i>Yes, Delete
+          </button>
+          <a href="{% url 'accounts:view_children' %}" class="btn btn-secondary cancel-btn">
+            <i class="bi bi-x-circle me-2"></i>Cancel
+          </a>
         </form>
       </div>
     </div>

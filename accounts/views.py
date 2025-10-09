@@ -36,9 +36,12 @@ def parent_login(request):
         password = request.POST.get('password')
         user = authenticate(request, username=username, password=password)
         if user is not None:
-            login(request, user)
-            messages.success(request, "Login successful.")
-            return redirect('accounts:parent_dashboard')  # ✅ goes to /dashboard/
+            if Parent.objects.filter(user=user).exists():
+                login(request, user)
+                messages.success(request, "Login successful.")
+                return redirect('accounts:parent_dashboard')  # ✅ goes to /dashboard/
+            else:
+                messages.error(request, "This account is not registered as a Parent.")
         else:
             messages.error(request, "Invalid username or password.")
             return render(request, "accounts/parent_login.html")
@@ -241,6 +244,10 @@ def book_appointment(request):
         if form.is_valid():
             appointment = form.save(commit=False)
             appointment.parent = parent
+            appointment.hospital = form.cleaned_data['hospital']  # ✅ Link hospital chosen
+            appointment.child = form.cleaned_data['child']        # ✅ Link child chosen
+            appointment.vaccine = form.cleaned_data.get('vaccine')
+            appointment.status = "Pending"
             appointment.save()
             messages.success(request, "Appointment booked successfully!")
             return redirect('accounts:view_appointments')
@@ -255,3 +262,48 @@ def view_appointments(request):
     appointments = Appointment.objects.filter(parent=parent).order_by('date')
     return render(request, 'accounts/view_appointments.html', {'appointments': appointments})
 
+
+# --- Hospital can view all appointments booked for them ---
+@login_required
+def hospital_appointments(request):
+    try:
+        hospital = Hospital.objects.get(user=request.user)
+    except Hospital.DoesNotExist:
+        messages.error(request, "Access denied. Please log in as a hospital.")
+        return redirect("accounts:hospital_login")
+
+    # Show all appointments for this hospital
+    all_appointments = Appointment.objects.filter(slot__hospital=hospital).select_related('child', 'parent', 'slot').order_by('slot__date','slot__start_time')
+    pending_appointments = all_appointments.filter(is_confirmed=False)
+    confirmed_appointments = all_appointments.filter(is_confirmed=True)
+    
+    context = {
+        "hospital": hospital,
+        "pending_appointments": pending_appointments, # Use this for the approval list
+        "confirmed_appointments": confirmed_appointments, # Use this for the schedule list
+    }
+    return render(request, "accounts/hospital_appointments.html", context)
+
+
+# --- Hospital can change appointment status (approve/complete/reject) ---
+@login_required
+def update_appointment_status(request, appointment_id):
+    try:
+        hospital = Hospital.objects.get(user=request.user)
+    except Hospital.DoesNotExist:
+        messages.error(request, "Access denied.")
+        return redirect("accounts:hospital_login")
+
+    appointment = get_object_or_404(Appointment, id=appointment_id, hospital=hospital)
+
+    if request.method == "POST":
+        new_status = request.POST.get("status")
+        if new_status in ["Pending", "Approved", "Completed", "Cancelled"]:
+            appointment.status = new_status
+            appointment.save()
+            messages.success(request, f"Appointment status updated to {new_status}.")
+        else:
+            messages.error(request, "Invalid status value.")
+        return redirect("accounts:hospital_appointments")
+
+    return render(request, "accounts/update_appointment_status.html", {"appointment": appointment})

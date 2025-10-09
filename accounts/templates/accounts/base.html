@@ -5,30 +5,241 @@
   <title>{% block title %}Child Vaccination{% endblock %}</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #4A90E2;
+      --secondary-color: #50C878;
+      --accent-color: #FF6B6B;
+      --dark-color: #2C3E50;
+      --light-color: #F8F9FA;
+      --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      --gradient-2: linear-gradient(135deg, #4A90E2 0%, #50C878 100%);
+      --gradient-3: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+    
+    * {
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    body {
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      min-height: 100vh;
+    }
+    
+    /* Modern Navigation */
+    .navbar {
+      background: var(--gradient-2) !important;
+      box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+      padding: 1rem 0;
+    }
+    
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .navbar-brand i {
+      font-size: 2rem;
+    }
+    
+    .nav-btn {
+      border-radius: 25px;
+      padding: 8px 20px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+    
+    .nav-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    /* Alert Animations */
+    .alert {
+      border-radius: 15px;
+      border: none;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+      animation: slideDown 0.5s ease;
+    }
+    
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    /* Card Styles */
+    .card {
+      border: none;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      overflow: hidden;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+    }
+    
+    .card-header {
+      border: none;
+      padding: 1.5rem;
+      font-weight: 600;
+      font-size: 1.2rem;
+    }
+    
+    /* Form Controls */
+    .form-control, .form-select {
+      border-radius: 10px;
+      border: 2px solid #e0e0e0;
+      padding: 12px 20px;
+      transition: all 0.3s ease;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.15);
+    }
+    
+    .form-label {
+      font-weight: 500;
+      color: var(--dark-color);
+      margin-bottom: 8px;
+    }
+    
+    /* Buttons */
+    .btn {
+      border-radius: 10px;
+      padding: 12px 30px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border: none;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .btn-primary {
+      background: var(--gradient-2);
+    }
+    
+    .btn-success {
+      background: linear-gradient(135deg, #50C878 0%, #2ECC71 100%);
+    }
+    
+    .btn-danger {
+      background: linear-gradient(135deg, #FF6B6B 0%, #E74C3C 100%);
+    }
+    
+    .btn-warning {
+      background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+      color: white;
+    }
+    
+    .btn-info {
+      background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    }
+    
+    /* Tables */
+    .table {
+      border-radius: 15px;
+      overflow: hidden;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+    }
+    
+    .table thead {
+      background: var(--gradient-2);
+      color: white;
+    }
+    
+    .table tbody tr {
+      transition: all 0.3s ease;
+    }
+    
+    .table tbody tr:hover {
+      background-color: rgba(74, 144, 226, 0.05);
+      transform: scale(1.01);
+    }
+    
+    /* Container */
+    .main-container {
+      margin-top: 2rem;
+      margin-bottom: 2rem;
+    }
+    
+    /* Responsive Nav */
+    @media (max-width: 768px) {
+      .navbar-nav {
+        padding: 1rem 0;
+      }
+      
+      .nav-btn {
+        margin: 5px 0;
+        width: 100%;
+      }
+    }
+  </style>
 </head>
-<body class="bg-light">
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container">
-    <a class="navbar-brand" href="{% url 'accounts:home' %}">Child Vaccination</a>
-    <div class="d-flex">
-      {% if user.is_authenticated %}
-        <a class="btn btn-light btn-sm me-2" href="{% url 'accounts:parent_dashboard' %}">Dashboard</a>
-        <a class="btn btn-info btn-sm me-2" href="{% url 'accounts:view_children' %}">Children</a>
-        <a class="btn btn-danger btn-sm" href="{% url 'accounts:parent_logout' %}">Logout</a>
-        <a class="btn btn-info btn-sm me-2" href="{% url 'accounts:book_appointment' %}">Book Appointment</a>
-        <a class="btn btn-outline-light btn-sm me-2" href="{% url 'accounts:view_appointments' %}">My Appointments</a>
-      {% else %}
-        <a class="btn btn-light btn-sm me-2" href="{% url 'accounts:parent_login' %}">Login</a>
-        <a class="btn btn-warning btn-sm" href="{% url 'accounts:parent_register' %}">Register</a>
-      {% endif %}
+    <a class="navbar-brand" href="{% url 'accounts:home' %}">
+      <i class="bi bi-heart-pulse-fill"></i>
+      Child Vaccination
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+      <div class="d-flex flex-column flex-lg-row gap-2 align-items-center">
+        {% if user.is_authenticated %}
+          <a class="btn btn-light btn-sm nav-btn" href="{% url 'accounts:parent_dashboard' %}">
+            <i class="bi bi-speedometer2"></i> Dashboard
+          </a>
+          <a class="btn btn-info btn-sm nav-btn" href="{% url 'accounts:view_children' %}">
+            <i class="bi bi-people-fill"></i> Children
+          </a>
+          <a class="btn btn-warning btn-sm nav-btn" href="{% url 'accounts:book_appointment' %}">
+            <i class="bi bi-calendar-plus"></i> Book Appointment
+          </a>
+          <a class="btn btn-outline-light btn-sm nav-btn" href="{% url 'accounts:view_appointments' %}">
+            <i class="bi bi-calendar-check"></i> My Appointments
+          </a>
+          <a class="btn btn-danger btn-sm nav-btn" href="{% url 'accounts:parent_logout' %}">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </a>
+        {% else %}
+          <a class="btn btn-light btn-sm nav-btn" href="{% url 'accounts:parent_login' %}">
+            <i class="bi bi-box-arrow-in-right"></i> Login
+          </a>
+          <a class="btn btn-warning btn-sm nav-btn" href="{% url 'accounts:parent_register' %}">
+            <i class="bi bi-person-plus-fill"></i> Register
+          </a>
+        {% endif %}
+      </div>
     </div>
   </div>
 </nav>
 
-<div class="container mt-4">
+<div class="container main-container">
   {% if messages %}
     {% for m in messages %}
       <div class="alert alert-{{ m.tags }} alert-dismissible fade show" role="alert">
+        <i class="bi bi-{% if m.tags == 'success' %}check-circle{% elif m.tags == 'error' %}x-circle{% elif m.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}-fill me-2"></i>
         {{ m }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
       </div>

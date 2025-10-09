@@ -1,42 +1,330 @@
 {% extends "accounts/base.html" %}
-{% block title %}Dashboard{% endblock %}
+{% block title %}Parent Dashboard{% endblock %}
 {% block content %}
-<div class="card shadow">
-  <div class="card-header bg-info text-white">
-    <h4>Welcome, {{ request.user.username }}</h4>
-  </div>
-  <div class="card-body">
-    {% if parent %}
-      <p><strong>Email:</strong> {{ request.user.email }}</p>
-      <p><strong>Phone:</strong> {{ parent.phone_number }}</p>
-      <p><strong>Address:</strong> {{ parent.address }}</p>
-    {% else %}
-      <div class="alert alert-warning">No parent profile found. If you just registered, try logging out and in again.</div>
-    {% endif %}
+<style>
+  .dashboard-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  }
+  
+  .welcome-card {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  
+  .welcome-icon {
+    width: 80px;
+    height: 80px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+  }
+  
+  .stats-row {
+    margin-bottom: 2rem;
+  }
+  
+  .stat-card {
+    background: white;
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    transition: all 0.3s ease;
+    border: none;
+    height: 100%;
+  }
+  
+  .stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  }
+  
+  .stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+  }
+  
+  .stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  
+  .stat-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+  }
+  
+  .info-card {
+    background: white;
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #2C3E50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .child-card {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+  }
+  
+  .child-card:hover {
+    border-color: #667eea;
+    transform: translateX(5px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  }
+  
+  .child-info {
+    flex: 1;
+  }
+  
+  .child-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #2C3E50;
+    margin-bottom: 0.5rem;
+  }
+  
+  .child-details {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    font-size: 0.9rem;
+    color: #6c757d;
+  }
+  
+  .child-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  .action-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn-action {
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+  
+  .quick-actions {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1.5rem;
+  }
+  
+  .quick-action-btn {
+    flex: 1;
+    min-width: 200px;
+    padding: 1rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+  
+  .empty-state i {
+    font-size: 4rem;
+    color: #e0e0e0;
+    margin-bottom: 1rem;
+  }
+  
+  .empty-state p {
+    color: #6c757d;
+    font-size: 1.1rem;
+  }
+  
+  @media (max-width: 768px) {
+    .welcome-card {
+      flex-direction: column;
+      text-align: center;
+    }
+    
+    .child-card {
+      flex-direction: column;
+      align-items: flex-start !important;
+    }
+    
+    .action-buttons {
+      width: 100%;
+      margin-top: 1rem;
+    }
+    
+    .btn-action {
+      flex: 1;
+    }
+  }
+</style>
 
-    <hr>
-    <h5 class="mt-4">Registered Children</h5>
-{% if children %}
-  <ul class="list-group mb-3">
-    {% for child in children %}
-      <li class="list-group-item d-flex justify-content-between align-items-center">
-        <div>
-          <strong>{{ child.name }}</strong><br>
-          <small>DOB: {{ child.date_of_birth }} | Gender: {{ child.gender }} | Blood Group: {{ child.blood_group }}</small>
-        </div>
-        <div>
-          <a href="{% url 'accounts:edit_child' child.id %}" class="btn btn-sm btn-primary">Edit</a>
-          <a href="{% url 'accounts:delete_child' child.id %}" class="btn btn-sm btn-danger">Delete</a>
-        </div>
-      </li>
-    {% endfor %}
-  </ul>
+<div class="dashboard-header">
+  <div class="welcome-card">
+    <div class="welcome-icon">
+      <i class="bi bi-person-circle"></i>
+    </div>
+    <div>
+      <h2 class="mb-2">Welcome back, {{ request.user.username }}!</h2>
+      <p class="mb-0 opacity-75">Manage your children's vaccination records and appointments</p>
+    </div>
+  </div>
+</div>
+
+<!-- Stats Row -->
+<div class="row stats-row g-3">
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="stat-icon" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white;">
+        <i class="bi bi-people-fill"></i>
+      </div>
+      <div class="stat-value">{{ children|length }}</div>
+      <div class="stat-label">Registered Children</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
+        <i class="bi bi-calendar-check"></i>
+      </div>
+      <div class="stat-value">0</div>
+      <div class="stat-label">Upcoming Appointments</div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="stat-card">
+      <div class="stat-icon" style="background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%); color: white;">
+        <i class="bi bi-shield-check"></i>
+      </div>
+      <div class="stat-value">0</div>
+      <div class="stat-label">Completed Vaccinations</div>
+    </div>
+  </div>
+</div>
+
+<!-- Parent Info -->
+{% if parent %}
+<div class="info-card">
+  <h5 class="section-title">
+    <i class="bi bi-info-circle-fill text-primary"></i>
+    Your Profile Information
+  </h5>
+  <div class="row">
+    <div class="col-md-4 mb-3">
+      <strong><i class="bi bi-envelope me-2 text-primary"></i>Email:</strong><br>
+      <span class="text-muted">{{ request.user.email }}</span>
+    </div>
+    <div class="col-md-4 mb-3">
+      <strong><i class="bi bi-telephone me-2 text-success"></i>Phone:</strong><br>
+      <span class="text-muted">{{ parent.phone_number }}</span>
+    </div>
+    <div class="col-md-4 mb-3">
+      <strong><i class="bi bi-geo-alt me-2 text-danger"></i>Address:</strong><br>
+      <span class="text-muted">{{ parent.address }}</span>
+    </div>
+  </div>
+</div>
 {% else %}
-  <p class="text-muted">No children registered yet. Add one below!</p>
+<div class="alert alert-warning">
+  <i class="bi bi-exclamation-triangle-fill me-2"></i>
+  <strong>No parent profile found.</strong> If you just registered, try logging out and in again.
+</div>
 {% endif %}
-    <a href="{% url 'accounts:add_child' %}" class="btn btn-success">Add Child</a>
-    <a href="{% url 'accounts:book_appointment' %}" class="btn btn-warning">Book Appointment</a>
-    <a href="{% url 'accounts:view_appointments' %}" class="btn btn-info">View Appointments</a>
+
+<!-- Children Section -->
+<div class="info-card">
+  <h5 class="section-title">
+    <i class="bi bi-people-fill text-success"></i>
+    Registered Children
+  </h5>
+  
+  {% if children %}
+    {% for child in children %}
+      <div class="child-card d-flex align-items-center">
+        <div class="child-info">
+          <div class="child-name">
+            <i class="bi bi-person-badge me-2"></i>{{ child.name }}
+          </div>
+          <div class="child-details">
+            <div class="child-detail-item">
+              <i class="bi bi-calendar3"></i>
+              <span><strong>DOB:</strong> {{ child.date_of_birth }}</span>
+            </div>
+            <div class="child-detail-item">
+              <i class="bi bi-gender-ambiguous"></i>
+              <span><strong>Gender:</strong> {{ child.gender }}</span>
+            </div>
+            <div class="child-detail-item">
+              <i class="bi bi-droplet"></i>
+              <span><strong>Blood Group:</strong> {{ child.blood_group }}</span>
+            </div>
+          </div>
+        </div>
+        <div class="action-buttons">
+          <a href="{% url 'accounts:edit_child' child.id %}" class="btn btn-primary btn-action">
+            <i class="bi bi-pencil-square"></i> Edit
+          </a>
+          <a href="{% url 'accounts:delete_child' child.id %}" class="btn btn-danger btn-action">
+            <i class="bi bi-trash"></i> Delete
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+  {% else %}
+    <div class="empty-state">
+      <i class="bi bi-person-plus"></i>
+      <p>No children registered yet. Add your first child to get started!</p>
+    </div>
+  {% endif %}
+  
+  <div class="quick-actions">
+    <a href="{% url 'accounts:add_child' %}" class="btn btn-success quick-action-btn">
+      <i class="bi bi-plus-circle"></i> Add New Child
+    </a>
+    <a href="{% url 'accounts:book_appointment' %}" class="btn btn-warning quick-action-btn">
+      <i class="bi bi-calendar-plus"></i> Book Appointment
+    </a>
+    <a href="{% url 'accounts:view_appointments' %}" class="btn btn-info quick-action-btn">
+      <i class="bi bi-calendar-check"></i> View Appointments
+    </a>
   </div>
 </div>
 {% endblock %}
