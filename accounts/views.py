@@ -71,12 +71,26 @@ def parent_dashboard(request):
         return redirect('accounts:home')
 
     children = Child.objects.filter(parent=parent)
-    recent_appointments = Appointment.objects.filter(parent=parent).order_by('-created_at')[:5]
+
+    # Use date/time for ordering to match the rest of your codebase
+    recent_appointments = Appointment.objects.filter(parent=parent).order_by('-date', '-time')[:5]
+
+    # Aggregate counts
+    total_appointments_count = Appointment.objects.filter(parent=parent).count()
+    completed_appointments_count = Appointment.objects.filter(
+        parent=parent, status='Completed'
+    ).count()
+
+    # If you want "completed among recent 5"
+    completed_recent_count = sum(1 for a in recent_appointments if a.status == "Completed")
 
     return render(request, "accounts/parent_dashboard.html", {
         "parent": parent,
         "children": children,
         "recent_appointments": recent_appointments,
+        "total_appointments_count": total_appointments_count,
+        "completed_appointments_count": completed_appointments_count,
+        "completed_recent_count": completed_recent_count,
     })
 
 
