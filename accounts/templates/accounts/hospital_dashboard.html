@@ -1,4 +1,4 @@
-{% extends "accounts/base.html" %}
+{% extends "accounts/base-copy.html" %}
 {% block title %}Hospital Dashboard{% endblock %}
 {% block content %}
 <style>
@@ -57,6 +57,7 @@
     padding: 2rem;
     box-shadow: 0 5px 20px rgba(0,0,0,0.08);
     transition: all 0.3s ease;
+    cursor: pointer;
   }
   
   .stat-card:hover {
@@ -168,6 +169,22 @@
     margin-top: 10px;
   }
   
+  .quick-action-btn {
+    padding: 1rem 2rem;
+    border-radius: 12px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .quick-action-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  }
+  
   @media (max-width: 768px) {
     .hospital-card {
       flex-direction: column;
@@ -200,7 +217,7 @@
         <i class="bi bi-calendar-event"></i>
       </div>
     </div>
-    <div class="stat-value">0</div>
+    <div class="stat-value">{{ total_appointments }}</div>
     <div class="stat-label">Total Appointments</div>
   </div>
   
@@ -210,7 +227,7 @@
         <i class="bi bi-clock-history"></i>
       </div>
     </div>
-    <div class="stat-value">0</div>
+    <div class="stat-value">{{ pending_count }}</div>
     <div class="stat-label">Pending Appointments</div>
   </div>
   
@@ -220,18 +237,36 @@
         <i class="bi bi-check-circle"></i>
       </div>
     </div>
-    <div class="stat-value">0</div>
+    <div class="stat-value">{{ completed_count }}</div>
     <div class="stat-label">Completed Vaccinations</div>
   </div>
   
   <div class="stat-card">
     <div class="stat-header">
       <div class="stat-icon" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);">
-        <i class="bi bi-people"></i>
+        <i class="bi bi-calendar-check"></i>
       </div>
     </div>
-    <div class="stat-value">0</div>
-    <div class="stat-label">Total Patients</div>
+    <div class="stat-value">{{ approved_count }}</div>
+    <div class="stat-label">Approved Appointments</div>
+  </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="info-card">
+  <h5 class="section-title">
+    <i class="bi bi-lightning-fill text-warning"></i>
+    Quick Actions
+  </h5>
+  <div class="d-grid gap-2 d-md-flex">
+    <a href="{% url 'accounts:hospital_appointments' %}" class="btn btn-primary btn-lg quick-action-btn">
+      <i class="bi bi-calendar-check"></i>
+      Manage Appointments
+    </a>
+    <a href="{% url 'accounts:hospital_appointments' %}" class="btn btn-success btn-lg quick-action-btn">
+      <i class="bi bi-eye"></i>
+      View All Appointments
+    </a>
   </div>
 </div>
 
@@ -275,7 +310,10 @@
       </div>
       <div class="feature-title">Appointment Management</div>
       <div class="feature-description">View and manage vaccination appointments</div>
-      <div class="coming-soon-badge">Coming Soon</div>
+      <a href="{% url 'accounts:hospital_appointments' %}" class="btn btn-sm btn-primary mt-3">
+        <i class="bi bi-arrow-right-circle me-1"></i>
+        Manage Now
+      </a>
     </div>
     
     <div class="feature-card">
@@ -307,9 +345,53 @@
   </div>
 </div>
 
+<!-- Recent Appointments Summary -->
+{% if total_appointments > 0 %}
+<div class="info-card">
+  <h5 class="section-title">
+    <i class="bi bi-clock-history text-info"></i>
+    Appointment Summary
+  </h5>
+  <div class="row">
+    <div class="col-md-3 mb-3">
+      <div class="p-3 bg-warning bg-opacity-10 rounded-3 text-center">
+        <h4 class="mb-0 text-warning">{{ pending_count }}</h4>
+        <small class="text-muted">Pending</small>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="p-3 bg-success bg-opacity-10 rounded-3 text-center">
+        <h4 class="mb-0 text-success">{{ approved_count }}</h4>
+        <small class="text-muted">Approved</small>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="p-3 bg-info bg-opacity-10 rounded-3 text-center">
+        <h4 class="mb-0 text-info">{{ completed_count }}</h4>
+        <small class="text-muted">Completed</small>
+      </div>
+    </div>
+    <div class="col-md-3 mb-3">
+      <div class="p-3 bg-primary bg-opacity-10 rounded-3 text-center">
+        <h4 class="mb-0 text-primary">{{ total_appointments }}</h4>
+        <small class="text-muted">Total</small>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
 <!-- Quick Info -->
 <div class="alert alert-info border-0 shadow-sm" style="border-radius: 15px;">
   <i class="bi bi-info-circle-fill me-2"></i>
-  <strong>Welcome to your dashboard!</strong> More features are being developed to help you manage appointments and vaccination records efficiently.
+  <strong>Welcome to your dashboard!</strong> 
+  {% if total_appointments > 0 %}
+    You have {{ pending_count }} pending appointment{{ pending_count|pluralize }} to review.
+  {% else %}
+    No appointments have been booked yet. Appointments will appear here when parents book them.
+  {% endif %}
 </div>
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 {% endblock %}

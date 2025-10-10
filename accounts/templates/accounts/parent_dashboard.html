@@ -159,6 +159,18 @@
     gap: 10px;
   }
   
+  .appointment-item {
+    background: #f8f9fa;
+    border-radius: 10px;
+    padding: 1rem;
+    margin-bottom: 0.75rem;
+    border-left: 4px solid #667eea;
+  }
+  
+  .appointment-item:hover {
+    background: #e9ecef;
+  }
+  
   .empty-state {
     text-align: center;
     padding: 3rem 1rem;
@@ -225,8 +237,8 @@
       <div class="stat-icon" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); color: white;">
         <i class="bi bi-calendar-check"></i>
       </div>
-      <div class="stat-value">0</div>
-      <div class="stat-label">Upcoming Appointments</div>
+      <div class="stat-value">{{ recent_appointments|length }}</div>
+      <div class="stat-label">Total Appointments</div>
     </div>
   </div>
   <div class="col-md-4">
@@ -234,7 +246,10 @@
       <div class="stat-icon" style="background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%); color: white;">
         <i class="bi bi-shield-check"></i>
       </div>
-      <div class="stat-value">0</div>
+      <div class="stat-value">
+        {% load custom_filters %}
+        {{ recent_appointments|filter_by_status:"Completed"|length|default:"0" }}
+      </div>
       <div class="stat-label">Completed Vaccinations</div>
     </div>
   </div>
@@ -250,15 +265,15 @@
   <div class="row">
     <div class="col-md-4 mb-3">
       <strong><i class="bi bi-envelope me-2 text-primary"></i>Email:</strong><br>
-      <span class="text-muted">{{ request.user.email }}</span>
+      <span class="text-muted">{{ request.user.email|default:"Not provided" }}</span>
     </div>
     <div class="col-md-4 mb-3">
       <strong><i class="bi bi-telephone me-2 text-success"></i>Phone:</strong><br>
-      <span class="text-muted">{{ parent.phone_number }}</span>
+      <span class="text-muted">{{ parent.phone_number|default:"Not provided" }}</span>
     </div>
     <div class="col-md-4 mb-3">
       <strong><i class="bi bi-geo-alt me-2 text-danger"></i>Address:</strong><br>
-      <span class="text-muted">{{ parent.address }}</span>
+      <span class="text-muted">{{ parent.address|default:"Not provided" }}</span>
     </div>
   </div>
 </div>
@@ -266,6 +281,45 @@
 <div class="alert alert-warning">
   <i class="bi bi-exclamation-triangle-fill me-2"></i>
   <strong>No parent profile found.</strong> If you just registered, try logging out and in again.
+</div>
+{% endif %}
+
+<!-- Recent Appointments Section -->
+{% if recent_appointments %}
+<div class="info-card">
+  <h5 class="section-title">
+    <i class="bi bi-calendar2-week text-info"></i>
+    Recent Appointments
+  </h5>
+  {% for appointment in recent_appointments %}
+    <div class="appointment-item">
+      <div class="d-flex justify-content-between align-items-start">
+        <div>
+          <strong>{{ appointment.child.name }}</strong> - {{ appointment.hospital.name }}
+          <br>
+          <small class="text-muted">
+            <i class="bi bi-calendar3 me-1"></i>{{ appointment.date }}
+            <i class="bi bi-clock ms-2 me-1"></i>{{ appointment.time }}
+            {% if appointment.vaccine %}
+              <i class="bi bi-capsule ms-2 me-1"></i>{{ appointment.vaccine.name }}
+            {% endif %}
+          </small>
+        </div>
+        <span class="badge 
+          {% if appointment.status == 'Pending' %}bg-warning
+          {% elif appointment.status == 'Approved' %}bg-success
+          {% elif appointment.status == 'Completed' %}bg-info
+          {% else %}bg-secondary{% endif %}">
+          {{ appointment.status }}
+        </span>
+      </div>
+    </div>
+  {% endfor %}
+  <div class="text-center mt-3">
+    <a href="{% url 'accounts:view_appointments' %}" class="btn btn-outline-primary">
+      <i class="bi bi-arrow-right-circle me-2"></i>View All Appointments
+    </a>
+  </div>
 </div>
 {% endif %}
 
@@ -294,7 +348,7 @@
             </div>
             <div class="child-detail-item">
               <i class="bi bi-droplet"></i>
-              <span><strong>Blood Group:</strong> {{ child.blood_group }}</span>
+              <span><strong>Blood Group:</strong> {{ child.blood_group|default:"Not specified" }}</span>
             </div>
           </div>
         </div>
@@ -327,4 +381,7 @@
     </a>
   </div>
 </div>
+
+<!-- Bootstrap Icons -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
 {% endblock %}

@@ -1,42 +1,77 @@
-{% extends "accounts/base.html" %}
+{% extends "accounts/base-copy.html" %}
 {% block title %}Update Appointment Status{% endblock %}
+
 {% block content %}
 <div class="container mt-5">
-  <div class="card shadow-lg">
-    <div class="card-header bg-info text-white text-center">
-      <h3>Update Appointment Status</h3>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Update Appointment Status</h4>
+                </div>
+                <div class="card-body">
+                    <h5>Appointment Details:</h5>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th width="30%">Child:</th>
+                            <td>{{ appointment.child.name }}</td>
+                        </tr>
+                        <tr>
+                            <th>Parent:</th>
+                            <td>{{ appointment.parent.user.username }}</td>
+                        </tr>
+                        <tr>
+                            <th>Vaccine:</th>
+                            <td>{{ appointment.vaccine.name|default:"Not specified" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Date & Time:</th>
+                            <td>{{ appointment.date|date:"F d, Y" }} at {{ appointment.time|time:"g:i A" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Current Status:</th>
+                            <td>
+                                <span class="badge 
+                                    {% if appointment.status == 'Pending' %}bg-warning{% endif %}
+                                    {% if appointment.status == 'Approved' %}bg-success{% endif %}
+                                    {% if appointment.status == 'Completed' %}bg-info{% endif %}
+                                    {% if appointment.status == 'Cancelled' %}bg-danger{% endif %}
+                                ">
+                                    {{ appointment.status }}
+                                </span>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <hr>
+
+                    <h5>Change Status:</h5>
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Select New Status:</label>
+                            <select name="status" id="status" class="form-select" required>
+                                <option value="">-- Choose Status --</option>
+                                {% for value, label in status_choices %}
+                                    <option value="{{ value }}" {% if value == appointment.status %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Update Status
+                            </button>
+                            <a href="{% url 'accounts:hospital_appointments' %}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i> Cancel
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="card-body">
-      <form method="post">
-        {% csrf_token %}
-        <div class="mb-3">
-          <label class="form-label">Child</label>
-          <input type="text" class="form-control" value="{{ appointment.child.name }}" readonly>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Vaccine</label>
-          <input type="text" class="form-control" value="{{ appointment.vaccine.name }}" readonly>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Date</label>
-          <input type="text" class="form-control" value="{{ appointment.date }}" readonly>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Time</label>
-          <input type="text" class="form-control" value="{{ appointment.time }}" readonly>
-        </div>
-        <div class="mb-3">
-          <label class="form-label">Change Status</label>
-          <select name="status" class="form-select">
-            <option value="Pending" {% if appointment.status == "Pending" %}selected{% endif %}>Pending</option>
-            <option value="Approved" {% if appointment.status == "Approved" %}selected{% endif %}>Approved</option>
-            <option value="Completed" {% if appointment.status == "Completed" %}selected{% endif %}>Completed</option>
-            <option value="Cancelled" {% if appointment.status == "Cancelled" %}selected{% endif %}>Cancelled</option>
-          </select>
-        </div>
-        <button type="submit" class="btn btn-success w-100">Update Status</button>
-      </form>
-    </div>
-  </div>
 </div>
 {% endblock %}

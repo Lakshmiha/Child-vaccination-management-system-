@@ -17,6 +17,31 @@
             overflow-x: hidden;
         }
         
+        /* Top Navigation Bar */
+        .top-navbar {
+            background: linear-gradient(135deg, #2C3E50 0%, #34495e 100%);
+            padding: 1rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .top-navbar .navbar-brand {
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        
+        .top-navbar .btn {
+            border-radius: 25px;
+            padding: 8px 20px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .top-navbar .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
         /* Hero Section */
         .hero-section {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -199,6 +224,25 @@
             background: white;
         }
         
+        .cta-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 1.5rem;
+        }
+        
+        .cta-list li {
+            padding: 0.5rem 0;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .cta-list li i {
+            color: #50C878;
+            font-size: 1.2rem;
+        }
+        
         .cta-btn {
             padding: 12px 35px;
             font-size: 1.1rem;
@@ -206,6 +250,7 @@
             font-weight: 600;
             transition: all 0.3s ease;
             border: none;
+            margin: 5px;
         }
         
         .cta-btn:hover {
@@ -219,14 +264,6 @@
         
         .gradient-green {
             background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
-        }
-        
-        .gradient-blue {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        }
-        
-        .gradient-orange {
-            background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
         }
         
         /* Footer */
@@ -244,6 +281,15 @@
         
         footer a:hover {
             color: #f1faee;
+        }
+        
+        /* Info Alert */
+        .info-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border-left: 4px solid #2196F3;
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 2rem 0;
         }
         
         /* Responsive */
@@ -267,6 +313,12 @@
             .section-title {
                 font-size: 2rem;
             }
+            
+            .cta-btn {
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+            }
         }
         
         /* Scroll Animation */
@@ -283,6 +335,96 @@
     </style>
 </head>
 <body>
+
+    <!-- Top Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-dark top-navbar">
+        <div class="container">
+            <a class="navbar-brand" href="{% url 'accounts:home' %}">
+                <i class="bi bi-heart-pulse-fill me-2"></i>
+                Child Vaccination System
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <div class="d-flex gap-2 flex-wrap">
+                    {% if user.is_authenticated %}
+                        <!-- Show dashboard based on user type -->
+                        {% if user.parent %}
+                            <a href="{% url 'accounts:parent_dashboard' %}" class="btn btn-light btn-sm">
+                                <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                            </a>
+                            <a href="{% url 'accounts:parent_logout' %}" class="btn btn-danger btn-sm">
+                                <i class="bi bi-box-arrow-right me-1"></i>Logout
+                            </a>
+                        {% elif user.hospital %}
+                            <a href="{% url 'accounts:hospital_dashboard' %}" class="btn btn-light btn-sm">
+                                <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                            </a>
+                            <a href="{% url 'accounts:hospital_logout' %}" class="btn btn-danger btn-sm">
+                                <i class="bi bi-box-arrow-right me-1"></i>Logout
+                            </a>
+                        {% else %}
+                            <a href="{% url 'accounts:parent_logout' %}" class="btn btn-danger btn-sm">
+                                <i class="bi bi-box-arrow-right me-1"></i>Logout
+                            </a>
+                        {% endif %}
+                    {% else %}
+                        <!-- Dropdown for Login -->
+                        <div class="dropdown">
+                            <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-box-arrow-in-right me-1"></i>Login
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'accounts:parent_login' %}">
+                                        <i class="bi bi-person-circle me-2"></i>Parent Login
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'accounts:hospital_login' %}">
+                                        <i class="bi bi-hospital me-2"></i>Hospital Login
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                        
+                        <!-- Dropdown for Register -->
+                        <div class="dropdown">
+                            <button class="btn btn-warning btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <i class="bi bi-person-plus-fill me-1"></i>Register
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'accounts:parent_register' %}">
+                                        <i class="bi bi-person-plus me-2"></i>Parent Registration
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" href="{% url 'accounts:hospital_register' %}">
+                                        <i class="bi bi-building-add me-2"></i>Hospital Registration
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Messages -->
+    {% if messages %}
+        <div class="container mt-3">
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    <i class="bi bi-{% if message.tags == 'success' %}check-circle{% elif message.tags == 'error' %}x-circle{% elif message.tags == 'warning' %}exclamation-triangle{% else %}info-circle{% endif %}-fill me-2"></i>
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 
     <!-- Hero Section -->
     <header class="hero-section">
@@ -360,73 +502,96 @@
     <section class="cta-section">
         <div class="container">
             <div class="text-center mb-5">
-                <h2 class="section-title">Ready to Get Started?</h2>
+                <h2 class="section-title">Choose Your Portal</h2>
+                <p class="text-muted">Select the appropriate portal to access the system</p>
             </div>
-            <div class="row g-4">
+            <div class="row g-4 justify-content-center">
+                <!-- Parent Portal -->
                 <div class="col-md-6 animate-on-scroll">
                     <div class="cta-card">
                         <div class="cta-card-header gradient-purple text-white text-center">
-                            <i class="bi bi-person-circle display-4 mb-3"></i>
+                            <i class="bi bi-person-hearts display-4 mb-3"></i>
                             <h3>Parent Portal</h3>
                         </div>
-                        <div class="cta-card-body text-center">
-                            <p class="mb-4">Access your child's schedule, history, and book new appointments.</p>
-                            <a href="{% url 'accounts:parent_login' %}" class="btn btn-primary cta-btn">
-                                <i class="bi bi-box-arrow-in-right me-2"></i>Parent Login
-                            </a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6 animate-on-scroll">
-                    <div class="cta-card">
-                        <div class="cta-card-header gradient-green text-white text-center">
-                            <i class="bi bi-hospital display-4 mb-3"></i>
-                            <h3>Hospital & Admin Access</h3>
-                        </div>
-                        <div class="cta-card-body text-center">
-                            <p class="mb-4">Manage vaccination records, appointments, and system oversight.</p>
-                            <div class="d-flex justify-content-center gap-2 flex-wrap">
-                                <a href="{% url 'accounts:hospital_register' %}" class="btn btn-success cta-btn">
-                                    <i class="bi bi-building-add me-2"></i>Register
-                                </a>
-                                <a href="{% url 'accounts:hospital_login' %}" class="btn btn-outline-success cta-btn">
+                        <div class="cta-card-body">
+                            <p class="text-center mb-3">Access your child's vaccination records and manage appointments.</p>
+                            <ul class="cta-list">
+                                <li>
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Register multiple children
+                                </li>
+                                <li>
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Book vaccination appointments
+                                </li>
+                                <li>
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Track vaccination history
+                                </li>
+                                <li>
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    View upcoming appointments
+                                </li>
+                            </ul>
+                            <div class="text-center">
+                                <a href="{% url 'accounts:parent_login' %}" class="btn btn-primary cta-btn">
                                     <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                                </a>
+                                <a href="{% url 'accounts:parent_register' %}" class="btn btn-outline-primary cta-btn">
+                                    <i class="bi bi-person-plus me-2"></i>Register
                                 </a>
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <!-- Hospital Portal -->
                 <div class="col-md-6 animate-on-scroll">
                     <div class="cta-card">
-                        <div class="cta-card-header gradient-blue text-white text-center">
-                            <i class="bi bi-calendar-plus display-4 mb-3"></i>
-                            <h3>Book Appointment</h3>
+                        <div class="cta-card-header gradient-green text-white text-center">
+                            <i class="bi bi-hospital-fill display-4 mb-3"></i>
+                            <h3>Hospital Portal</h3>
                         </div>
-                        <div class="cta-card-body text-center">
-                            <p class="mb-4">Schedule a vaccination appointment with your preferred hospital easily.</p>
-                            <a href="{% url 'accounts:book_appointment' %}" class="btn btn-info cta-btn">
-                                <i class="bi bi-calendar-check me-2"></i>Book Now
-                            </a>
+                        <div class="cta-card-body">
+                            <p class="text-center mb-3">Manage vaccination records, appointments, and provide quality healthcare.</p>
+                            <ul class="cta-list">
+                                <li>
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Manage appointments
+                                </li>
+                                <li>
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Update vaccination records
+                                </li>
+                                <li>
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Track patient history
+                                </li>
+                                <li>
+                                    <i class="bi bi-check-circle-fill"></i>
+                                    Generate reports
+                                </li>
+                            </ul>
+                            <div class="text-center">
+                                <a href="{% url 'accounts:hospital_login' %}" class="btn btn-success cta-btn">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                                </a>
+                                <a href="{% url 'accounts:hospital_register' %}" class="btn btn-outline-success cta-btn">
+                                    <i class="bi bi-building-add me-2"></i>Register
+                                </a>
+                            </div>
                         </div>
                     </div>
                 </div>
-
-                <div class="col-md-6 animate-on-scroll">
-                    <div class="cta-card">
-                        <div class="cta-card-header gradient-orange text-white text-center">
-                            <i class="bi bi-clipboard-check display-4 mb-3"></i>
-                            <h3>View Appointments</h3>
-                        </div>
-                        <div class="cta-card-body text-center">
-                            <p class="mb-4">Check your upcoming vaccination appointments and their status.</p>
-                            <a href="{% url 'accounts:view_appointments' %}" class="btn btn-warning cta-btn">
-                                <i class="bi bi-eye me-2"></i>View Appointments
-                            </a>
-                        </div>
-                    </div>
-                </div>
+            </div>
+            
+            <!-- Important Note -->
+            <div class="info-box mt-4 animate-on-scroll">
+                <h5><i class="bi bi-info-circle-fill me-2"></i>Important Information</h5>
+                <ul class="mb-0">
+                    <li><strong>For Parents:</strong> You can register immediately and start managing your child's vaccinations.</li>
+                    <li><strong>For Hospitals:</strong> Registration requires admin approval. After registering, please wait for approval before you can login.</li>
+                </ul>
             </div>
         </div>
     </section>

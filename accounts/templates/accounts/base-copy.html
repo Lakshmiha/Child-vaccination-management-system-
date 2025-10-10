@@ -2,21 +2,22 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>{% block title %}Child Vaccination{% endblock %}</title>
+  <title>{% block title %}Child Vaccination - Hospital{% endblock %}</title>
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary-color: #4A90E2;
-      --secondary-color: #50C878;
+      --primary-color: #56ab2f;
+      --secondary-color: #a8e063;
       --accent-color: #FF6B6B;
       --dark-color: #2C3E50;
       --light-color: #F8F9FA;
       --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      --gradient-2: linear-gradient(135deg, #4A90E2 0%, #50C878 100%);
+      --gradient-2: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
       --gradient-3: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+      --gradient-hospital: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
     }
     
     * {
@@ -30,7 +31,7 @@
     
     /* Modern Navigation */
     .navbar {
-      background: var(--gradient-2) !important;
+      background: var(--gradient-hospital) !important;
       box-shadow: 0 2px 20px rgba(0,0,0,0.1);
       padding: 1rem 0;
     }
@@ -47,7 +48,16 @@
       font-size: 2rem;
     }
     
-    .nav-btn, .dropdown-toggle {
+    .hospital-badge {
+      background: rgba(255,255,255,0.2);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-left: 10px;
+    }
+    
+    .nav-btn {
       border-radius: 25px;
       padding: 8px 20px;
       font-weight: 500;
@@ -55,25 +65,9 @@
       border: 2px solid transparent;
     }
     
-    .nav-btn:hover, .dropdown-toggle:hover {
+    .nav-btn:hover {
       transform: translateY(-2px);
       box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-
-    .dropdown-menu {
-      border-radius: 12px;
-      border: 0;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-      padding: .5rem;
-      min-width: 14rem;
-    }
-
-    .dropdown-item {
-      border-radius: 8px;
-      padding: .6rem .75rem;
-    }
-    .dropdown-item:hover {
-      background-color: rgba(74, 144, 226, 0.08);
     }
     
     /* Alert Animations */
@@ -85,8 +79,14 @@
     }
     
     @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
+      from {
+        opacity: 0;
+        transform: translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     
     /* Card Styles */
@@ -120,7 +120,7 @@
     
     .form-control:focus, .form-select:focus {
       border-color: var(--primary-color);
-      box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.15);
+      box-shadow: 0 0 0 0.2rem rgba(86, 171, 47, 0.15);
     }
     
     .form-label {
@@ -143,11 +143,26 @@
       box-shadow: 0 5px 15px rgba(0,0,0,0.2);
     }
     
-    .btn-primary { background: var(--gradient-2); }
-    .btn-success  { background: linear-gradient(135deg, #50C878 0%, #2ECC71 100%); }
-    .btn-danger   { background: linear-gradient(135deg, #FF6B6B 0%, #E74C3C 100%); }
-    .btn-warning  { background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%); color: white; }
-    .btn-info     { background: linear-gradient(135deg, #17a2b8 0%, #138496 100%); }
+    .btn-primary {
+      background: var(--gradient-hospital);
+    }
+    
+    .btn-success {
+      background: linear-gradient(135deg, #50C878 0%, #2ECC71 100%);
+    }
+    
+    .btn-danger {
+      background: linear-gradient(135deg, #FF6B6B 0%, #E74C3C 100%);
+    }
+    
+    .btn-warning {
+      background: linear-gradient(135deg, #FFA500 0%, #FF8C00 100%);
+      color: white;
+    }
+    
+    .btn-info {
+      background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    }
     
     /* Tables */
     .table {
@@ -157,13 +172,16 @@
     }
     
     .table thead {
-      background: var(--gradient-2);
+      background: var(--gradient-hospital);
       color: white;
     }
     
-    .table tbody tr { transition: all 0.3s ease; }
+    .table tbody tr {
+      transition: all 0.3s ease;
+    }
+    
     .table tbody tr:hover {
-      background-color: rgba(74, 144, 226, 0.05);
+      background-color: rgba(86, 171, 47, 0.05);
       transform: scale(1.01);
     }
     
@@ -175,8 +193,18 @@
     
     /* Responsive Nav */
     @media (max-width: 768px) {
-      .navbar-nav { padding: 1rem 0; }
-      .nav-btn, .dropdown-toggle { margin: 5px 0; width: 100%; }
+      .navbar-nav {
+        padding: 1rem 0;
+      }
+      
+      .nav-btn {
+        margin: 5px 0;
+        width: 100%;
+      }
+      
+      .hospital-badge {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -184,70 +212,34 @@
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container">
     <a class="navbar-brand" href="{% url 'accounts:home' %}">
-      <i class="bi bi-heart-pulse-fill"></i>
+      <i class="bi bi-hospital-fill"></i>
       Child Vaccination
+      {% if user.is_authenticated %}
+        <span class="hospital-badge">Hospital Portal</span>
+      {% endif %}
     </a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
-
     <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
       <div class="d-flex flex-column flex-lg-row gap-2 align-items-center">
         {% if user.is_authenticated %}
-          {# Route Dashboard to home; view will redirect to correct dashboard based on role #}
-          <a class="btn btn-light btn-sm nav-btn" href="{% url 'accounts:home' %}">
+          <a class="btn btn-light btn-sm nav-btn" href="{% url 'accounts:hospital_dashboard' %}">
             <i class="bi bi-speedometer2"></i> Dashboard
           </a>
-
-          {# Role-aware Logout: use hospital_logout if user has hospital, else parent_logout #}
-          {% if user.hospital %}
-            <a class="btn btn-danger btn-sm nav-btn" href="{% url 'accounts:hospital_logout' %}">
-              <i class="bi bi-box-arrow-right"></i> Logout
-            </a>
-          {% else %}
-            <a class="btn btn-danger btn-sm nav-btn" href="{% url 'accounts:parent_logout' %}">
-              <i class="bi bi-box-arrow-right"></i> Logout
-            </a>
-          {% endif %}
-
+          <a class="btn btn-info btn-sm nav-btn" href="{% url 'accounts:hospital_appointments' %}">
+            <i class="bi bi-calendar-check"></i> Appointments
+          </a>
+          <a class="btn btn-danger btn-sm nav-btn" href="{% url 'accounts:hospital_logout' %}">
+            <i class="bi bi-box-arrow-right"></i> Logout
+          </a>
         {% else %}
-          {# Login dropdown #}
-          <div class="dropdown">
-            <button class="btn btn-light btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="bi bi-box-arrow-in-right"></i> Login
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li>
-                <a class="dropdown-item" href="{% url 'accounts:parent_login' %}">
-                  <i class="bi bi-person-circle me-2"></i> Login as Parent
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="{% url 'accounts:hospital_login' %}">
-                  <i class="bi bi-hospital me-2"></i> Login as Hospital
-                </a>
-              </li>
-            </ul>
-          </div>
-
-          {# Register dropdown #}
-          <div class="dropdown">
-            <button class="btn btn-warning btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-              <i class="bi bi-person-plus-fill"></i> Register
-            </button>
-            <ul class="dropdown-menu dropdown-menu-end">
-              <li>
-                <a class="dropdown-item" href="{% url 'accounts:parent_register' %}">
-                  <i class="bi bi-person-plus me-2"></i> Register as Parent
-                </a>
-              </li>
-              <li>
-                <a class="dropdown-item" href="{% url 'accounts:hospital_register' %}">
-                  <i class="bi bi-building-add me-2"></i> Register Hospital
-                </a>
-              </li>
-            </ul>
-          </div>
+          <a class="btn btn-light btn-sm nav-btn" href="{% url 'accounts:hospital_login' %}">
+            <i class="bi bi-box-arrow-in-right"></i> Login
+          </a>
+          <a class="btn btn-warning btn-sm nav-btn" href="{% url 'accounts:hospital_register' %}">
+            <i class="bi bi-building-add"></i> Register Hospital
+          </a>
         {% endif %}
       </div>
     </div>
