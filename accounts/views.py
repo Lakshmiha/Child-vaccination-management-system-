@@ -4,9 +4,9 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from django.db.models import Q
 from datetime import date
-
+from django.http import JsonResponse
 from .forms import ParentRegistrationForm, ChildForm, HospitalRegisterForm, AppointmentForm
-from .models import Parent, Child, Hospital, Appointment, Vaccine
+from .models import Parent, Child, Hospital, Appointment, Vaccine,Inventory
 
 
 def home(request):  
@@ -307,13 +307,31 @@ def hospital_confirm_appointment(request, appointment_id):
 
     appointment = get_object_or_404(Appointment, id=appointment_id, hospital=hospital)
 
+    
+    if not appointment.vaccine:
+        messages.error(request, "Cannot approve appointment: No vaccine selected.")
+        return redirect("accounts:hospital_appointments")
+
+    
+
+    inventory_item = Inventory.objects.filter(hospital=hospital, vaccine=appointment.vaccine).first()
+
+    # ✅ If not available or zero stock → reject approval
+    if not inventory_item or inventory_item.stock_quantity <= 0:
+        messages.error(request, f"Cannot approve. '{appointment.vaccine.name}' is OUT OF STOCK.")
+        return redirect("accounts:hospital_appointments")
+
+    # ✅ If stock available → approve & reduce stock
     if request.method == "POST":
         appointment.status = "Approved"
         appointment.save()
-        messages.success(request, f"Appointment for {appointment.child.name} has been approved!")
-    
-    return redirect("accounts:hospital_appointments")
 
+        inventory_item.stock_quantity -= 1
+        inventory_item.save()
+
+        messages.success(request, f"Appointment approved and 1 dose of '{appointment.vaccine.name}' deducted from stock.")
+
+    return redirect("accounts:hospital_appointments")
 
 # ==================== APPOINTMENT VIEWS (PARENT) ====================
 
@@ -408,7 +426,7 @@ def is_superuser(user):
 @login_required
 @user_passes_test(is_superuser)
 def approve_hospitals(request):
-    pending = Hospital.objects.filter(approved=False).order_by('-id')
+    pending = Hospital.objects.filter(approved=False).order_by('id')
     approved = Hospital.objects.filter(approved=True).order_by('name')
     
     context = {
@@ -451,3 +469,104 @@ def reject_hospital(request, hospital_id):
         messages.success(request, f"Hospital '{hospital_name}' has been rejected and removed.")
     
     return redirect('accounts:approve_hospitals')
+
+# --- In accounts/views.py ---
+
+# ... imports ...
+# ... existing views ...
+
+# ==================== HOSPITAL INVENTORY VIEWS ====================
+
+@login_required
+def hospital_inventory(request):
+    try:
+        hospital = Hospital.objects.get(user=request.user)
+    except Hospital.DoesNotExist:
+        messages.error(request, "Access denied. Please log in as a hospital.")
+        return redirect("accounts:hospital_login")
+
+    # Fetch all inventory items for this hospital
+    inventory_items = Inventory.objects.filter(hospital=hospital).select_related('vaccine').order_by('vaccine__name')
+    
+    # Identify vaccines not currently in the inventory for an "Add New" feature
+    existing_vaccine_ids = inventory_items.values_list('vaccine_id', flat=True)
+    available_vaccines_to_add = Vaccine.objects.exclude(id__in=existing_vaccine_ids)
+
+    context = {
+        'hospital': hospital,
+        'inventory_items': inventory_items,
+        'available_vaccines_to_add': available_vaccines_to_add,
+    }
+    return render(request, 'accounts/hospital_inventory.html', context)
+
+
+@login_required
+def update_inventory_stock(request, inventory_id=None, vaccine_id=None):
+    try:
+        hospital = Hospital.objects.get(user=request.user)
+    except Hospital.DoesNotExist:
+        messages.error(request, "Access denied.")
+        return redirect("accounts:hospital_login")
+
+    if inventory_id:
+        inventory = get_object_or_404(Inventory, id=inventory_id, hospital=hospital)
+        vaccine_name = inventory.vaccine.name
+    elif vaccine_id:
+        vaccine = get_object_or_404(Vaccine, id=vaccine_id)
+        # Check if inventory already exists (shouldn't happen if view is used correctly)
+        inventory, created = Inventory.objects.get_or_create(
+            hospital=hospital, 
+            vaccine=vaccine, 
+            defaults={'stock_quantity': 0}
+        )
+        vaccine_name = vaccine.name
+    else:
+        messages.error(request, "Invalid request.")
+        return redirect('accounts:hospital_inventory')
+
+    if request.method == 'POST':
+        new_stock = request.POST.get('stock_quantity')
+        try:
+            new_stock = int(new_stock)
+            if new_stock < 0:
+                raise ValueError("Stock cannot be negative.")
+                
+            inventory.stock_quantity = new_stock
+            inventory.save()
+            messages.success(request, f"Stock for {vaccine_name} updated to {new_stock}.")
+        except ValueError:
+            messages.error(request, "Invalid stock quantity entered.")
+        
+        return redirect('accounts:hospital_inventory')
+
+    context = {
+        'inventory': inventory,
+        'vaccine_name': vaccine_name,
+    }
+    return render(request, 'accounts/update_inventory_stock.html', context)
+
+# --- In accounts/views.py ---
+
+
+# ... other imports ...
+
+def get_available_vaccines_api(request, hospital_id):
+    """API endpoint for AJAX to fetch available vaccines for a given hospital."""
+    try:
+        hospital = Hospital.objects.get(id=hospital_id)
+        
+        # Filter Inventory where stock > 0 for the hospital
+        available_inventory = Inventory.objects.filter(
+            hospital=hospital, 
+            stock_quantity__gt=0
+        ).select_related('vaccine')
+        
+        vaccine_list = [
+            {'id': item.vaccine.id, 'name': item.vaccine.name}
+            for item in available_inventory
+        ]
+        
+        return JsonResponse({'vaccines': vaccine_list})
+        
+    except Hospital.DoesNotExist:
+        return JsonResponse({'error': 'Hospital not found'}, status=404)

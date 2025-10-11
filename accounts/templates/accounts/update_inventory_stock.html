@@ -1,0 +1,141 @@
+{% extends "accounts/base-copy.html" %}
+{% block title %}Update Stock for {{ inventory.vaccine.name }}{% endblock %}
+
+{% block content %}
+<style>
+  .form-wrapper {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 0;
+  }
+  
+  .form-card {
+    max-width: 550px;
+    width: 100%;
+    animation: fadeInUp 0.6s ease;
+  }
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  .form-header {
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+    padding: 2rem;
+    border-radius: 20px 20px 0 0;
+  }
+  
+  .form-icon {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+  }
+  
+  .form-icon i {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  
+  .form-body {
+    padding: 2.5rem;
+    background: white;
+  }
+  
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: #6c757d;
+    text-decoration: none;
+    margin-bottom: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  .back-link:hover {
+    color: #56ab2f;
+    transform: translateX(-5px);
+  }
+
+  .info-table th, .info-table td {
+    padding: 10px;
+  }
+
+  .submit-btn {
+    padding: 15px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    font-weight: 600;
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+    border: none;
+    transition: all 0.3s ease;
+  }
+</style>
+
+<div class="form-wrapper">
+  <div class="form-card">
+    <a href="{% url 'accounts:hospital_inventory' %}" class="back-link">
+      <i class="bi bi-arrow-left-circle"></i> Back to Inventory
+    </a>
+    
+    <div class="card shadow-lg border-0">
+      <div class="form-header text-white text-center">
+        <div class="form-icon">
+          <i class="bi bi-capsule"></i>
+        </div>
+        <h3 class="mb-0 fw-bold">Update Stock</h3>
+        <p class="mb-0 mt-2 opacity-75">{{ inventory.vaccine.name }}</p>
+      </div>
+      <div class="form-body">
+        
+        <h5 class="mb-3 text-center">Current Stock: <span class="text-success">{{ inventory.stock_quantity }}</span></h5>
+        
+        <div class="info-card p-3 mb-4 rounded" style="background: #f8f9fa;">
+          <table class="table table-sm info-table mb-0">
+            <tr>
+              <th class="border-0">Vaccine:</th>
+              <td class="border-0">{{ inventory.vaccine.name }}</td>
+            </tr>
+            <tr>
+              <th>Last Updated:</th>
+              <td>{{ inventory.last_updated|date:"M d, Y" }} at {{ inventory.last_updated|time:"g:i A" }}</td>
+            </tr>
+          </table>
+        </div>
+
+        <form method="POST">
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="stock_quantity" class="form-label">New Stock Quantity</label>
+            <input type="number" name="stock_quantity" id="stock_quantity" class="form-control" 
+                   value="{{ inventory.stock_quantity }}" min="0" required>
+            <div class="form-text">Enter the total quantity of available doses.</div>
+          </div>
+          
+          <div class="d-grid mt-4">
+            <button type="submit" class="btn btn-success submit-btn">
+              <i class="bi bi-check-circle me-2"></i>Save New Stock
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

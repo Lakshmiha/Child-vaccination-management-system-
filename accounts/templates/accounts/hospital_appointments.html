@@ -80,7 +80,16 @@
                                 <td>{{ appt.id }}</td>
                                 <td>{{ appt.child.name }}</td>
                                 <td>{{ appt.parent.user.username }}</td>
-                                <td>{{ appt.vaccine.name|default:"Not specified" }}</td>
+                                <td>
+                                    {{ appt.vaccine.name|default:"Not specified" }}
+                                    {% if appt.vaccine %}
+                                        {% for item in hospital.inventory.all %}
+                                            {% if item.vaccine.id == appt.vaccine.id %}
+                                                (Stock: {{ item.stock_quantity }})
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </td>
                                 <td>{{ appt.date|date:"M d, Y" }} at {{ appt.time|time:"g:i A" }}</td>
                                 <td><span class="badge bg-warning text-dark">PENDING</span></td>
                                 <td>
@@ -88,7 +97,7 @@
                                     <form method="post" action="{% url 'accounts:hospital_confirm_appointment' appt.id %}" style="display:inline;">
                                         {% csrf_token %}
                                         <button type="submit" class="btn btn-sm btn-success">
-                                            <i class="fas fa-check"></i> Approve
+                                            <i class="fas fa-check"></i> Approve(Check Stock)
                                         </button>
                                     </form>
                                     <!-- Update Status -->

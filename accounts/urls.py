@@ -37,4 +37,21 @@ urlpatterns = [
     path('book-appointment/', views.book_appointment, name='book_appointment'),
     path('view-appointments/', views.view_appointments, name='view_appointments'),
     path('appointment/cancel/<int:appointment_id>/', views.cancel_appointment, name='cancel_appointment'),
+    # --- In accounts/urls.py ---
+
+# ... existing Parent and Hospital URLs ...
+
+# Hospital Inventory Management
+    path('hospital/inventory/', views.hospital_inventory, name='hospital_inventory'),
+    path('hospital/inventory/update/<int:inventory_id>/', views.update_inventory_stock, name='update_inventory_stock'),
+    path('hospital/inventory/add/<int:vaccine_id>/', views.update_inventory_stock, name='add_inventory_stock'),
+    # --- In accounts/urls.py ---
+
+# ... existing URLs ...
+
+# API endpoint for AJAX
+    path('api/get-available-vaccines/<int:hospital_id>/', views.get_available_vaccines_api, name='get_available_vaccines_api'),
+
+# ... other URLs ...
+# ... other URLs ...
 ]

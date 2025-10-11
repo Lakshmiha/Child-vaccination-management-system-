@@ -2,7 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.forms.widgets import DateInput, TimeInput
-from .models import Parent, Child, Hospital, Appointment, Vaccine
+from .models import Parent, Child, Hospital, Appointment, Vaccine,Inventory
 from datetime import date
 
 
@@ -119,43 +119,56 @@ class HospitalRegisterForm(forms.ModelForm):
         return hospital
 
 
+# --- In accounts/forms.py ---
+
 class AppointmentForm(forms.ModelForm):
+    # ... (Meta and __init__ methods unchanged for now)
+
+    def clean(self):
+        cleaned_data = super().clean()
+        hospital = cleaned_data.get('hospital')
+        vaccine = cleaned_data.get('vaccine')
+        date = cleaned_data.get('date')
+
+        # Existing clean_date validation (important to keep)
+        # ...
+
+        # **New Inventory Validation Logic**
+        if hospital and vaccine:
+            try:
+                inventory = Inventory.objects.get(hospital=hospital, vaccine=vaccine)
+                if inventory.stock_quantity <= 0:
+                    self.add_error(
+                        'vaccine',
+                        f"{vaccine.name} is currently out of stock at {hospital.name}."
+                    )
+            except Inventory.DoesNotExist:
+                # If no inventory record exists, assume out of stock for booking purposes
+                self.add_error(
+                    'vaccine',
+                    f"{vaccine.name} inventory data is unavailable at {hospital.name} (Out of stock or not offered)."
+                )
+
+        return cleaned_data
+    
+class ChildForm(forms.ModelForm):
     class Meta:
-        model = Appointment
-        fields = ['child', 'hospital', 'vaccine', 'date', 'time', 'notes']
+        model = Child
+        fields = ['name', 'date_of_birth', 'gender', 'blood_group']
         widgets = {
-            'date': DateInput(attrs={'type': 'date', 'class': 'form-control'}),
-            'time': TimeInput(attrs={'type': 'time', 'class': 'form-control'}),
-            'notes': forms.Textarea(attrs={'class': 'form-control', 'rows': 3, 'placeholder': 'Any additional information...'}),
+            'date_of_birth': forms.DateInput(attrs={'type': 'date', 'class': 'form-control'}),
+            'name': forms.TextInput(attrs={'class': 'form-control'}),
+            'gender': forms.Select(attrs={'class': 'form-control'}),
+            'blood_group': forms.TextInput(attrs={'class': 'form-control'}),
         }
 
     def __init__(self, *args, **kwargs):
-        parent = kwargs.pop('parent', None)
         super().__init__(*args, **kwargs)
-        
-        # Only show approved hospitals
-        self.fields['hospital'].queryset = Hospital.objects.filter(approved=True)
-        self.fields['hospital'].widget.attrs.update({'class': 'form-control'})
-        
-        # Only show this parent's children
-        if parent:
-            self.fields['child'].queryset = Child.objects.filter(parent=parent)
-        else:
-            self.fields['child'].queryset = Child.objects.none()
-        
-        self.fields['child'].widget.attrs.update({'class': 'form-control'})
-        
-        # Make vaccine optional
-        self.fields['vaccine'].required = False
-        self.fields['vaccine'].queryset = Vaccine.objects.all()
-        self.fields['vaccine'].widget.attrs.update({'class': 'form-control'})
-        
-        # Make notes optional
-        self.fields['notes'].required = False
+        # Browser-level cap
+        self.fields['date_of_birth'].widget.attrs['max'] = date.today().isoformat()
 
-    def clean_date(self):
-        """Validate that appointment date is not in the past"""
-        appointment_date = self.cleaned_data.get('date')
-        if appointment_date and appointment_date < date.today():
-            raise forms.ValidationError("Appointment date cannot be in the past.")
-        return appointment_date
+    def clean_date_of_birth(self):
+        dob = self.cleaned_data.get('date_of_birth')
+        if dob and dob > date.today():
+            raise forms.ValidationError("Date of birth cannot be in the future.")
+        return dob

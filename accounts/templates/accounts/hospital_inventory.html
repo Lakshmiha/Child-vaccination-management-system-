@@ -1,0 +1,223 @@
+{% extends "accounts/base-copy.html" %}
+{% block title %}Vaccine Inventory{% endblock %}
+
+{% block content %}
+<style>
+  .inventory-header {
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+    color: white;
+    padding: 2rem;
+    border-radius: 20px;
+    margin-bottom: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  }
+  
+  .header-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  
+  .header-title {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .header-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+  }
+  
+  .inventory-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    margin-bottom: 2rem;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+    color: #2C3E50;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .table thead {
+    background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+    color: white;
+  }
+  
+  .badge-stock-low {
+    background: #ffc107;
+    color: #212529;
+    font-weight: 600;
+  }
+  
+  .badge-stock-ok {
+    background: #28a745;
+    color: white;
+    font-weight: 600;
+  }
+  
+  .badge-stock-out {
+    background: #dc3545;
+    color: white;
+    font-weight: 600;
+  }
+  
+  .update-btn {
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+  }
+  
+  .update-btn:hover {
+    transform: translateY(-2px);
+  }
+  
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+  }
+  
+  .empty-state i {
+    font-size: 4rem;
+    color: #e0e0e0;
+    margin-bottom: 1rem;
+  }
+</style>
+
+<div class="inventory-header">
+  <div class="header-content">
+    <div class="header-title">
+      <div class="header-icon">
+        <i class="bi bi-box-seam-fill"></i>
+      </div>
+      <div>
+        <h2 class="mb-0">Vaccine Inventory Management</h2>
+        <p class="mb-0 opacity-75">Manage stock levels for all vaccines at {{ hospital.name }}</p>
+      </div>
+    </div>
+    <a href="#addVaccineModal" class="btn btn-light" data-bs-toggle="modal">
+      <i class="bi bi-plus-circle me-2"></i>Add New Vaccine Stock
+    </a>
+  </div>
+</div>
+
+<div class="inventory-card">
+  <h5 class="section-title">
+    <i class="bi bi-list-check text-success"></i>
+    Current Vaccine Stock
+  </h5>
+
+  {% if inventory_items %}
+    <div class="table-responsive">
+      <table class="table table-striped table-hover text-center">
+        <thead>
+          <tr>
+            <th><i class="bi bi-capsule me-2"></i>Vaccine Name</th>
+            <th><i class="bi bi-hash me-2"></i>Stock Quantity</th>
+            <th><i class="bi bi-flag me-2"></i>Status</th>
+            <th><i class="bi bi-calendar-check me-2"></i>Last Updated</th>
+            <th class="text-center"><i class="bi bi-gear me-2"></i>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in inventory_items %}
+          <tr>
+            <td>
+              <strong>{{ item.vaccine.name }}</strong>
+            </td>
+            <td>
+              <h4 class="mb-0">{{ item.stock_quantity }}</h4>
+            </td>
+            <td>
+              <span class="badge status-badge 
+                {% if item.stock_quantity > 20 %}badge-stock-ok
+                {% elif item.stock_quantity > 0 %}badge-stock-low
+                {% else %}badge-stock-out{% endif %}">
+                
+                {% if item.stock_quantity > 20 %}
+                  <i class="bi bi-check-circle-fill me-1"></i> Adequate Stock
+                {% elif item.stock_quantity > 0 %}
+                  <i class="bi bi-exclamation-triangle-fill me-1"></i> Low Stock (Under 20)
+                {% else %}
+                  <i class="bi bi-x-circle-fill me-1"></i> Out of Stock
+                {% endif %}
+              </span>
+            </td>
+            <td>
+              <small class="text-muted">{{ item.last_updated|date:"M d, Y" }} at {{ item.last_updated|time:"g:i A" }}</small>
+            </td>
+            <td class="text-center">
+              <a href="{% url 'accounts:update_inventory_stock' inventory_id=item.id %}" class="btn btn-primary btn-sm update-btn">
+                <i class="bi bi-pencil-square me-1"></i> Update Stock
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <i class="bi bi-capsule"></i>
+      <p>No vaccine stock registered yet. Use the "Add New Vaccine Stock" button to get started.</p>
+    </div>
+  {% endif %}
+</div>
+
+<div class="modal fade" id="addVaccineModal" tabindex="-1" aria-labelledby="addVaccineModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title" id="addVaccineModalLabel"><i class="bi bi-plus-circle me-2"></i>Add Vaccine Stock</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <form method="get" action="{% url 'accounts:add_inventory_stock' vaccine_id=0 %}">
+        <div class="modal-body">
+          {% if available_vaccines_to_add %}
+            <div class="mb-3">
+              <label for="vaccine-select" class="form-label">Select Vaccine to Add:</label>
+              <select name="vaccine_id" id="vaccine-select" class="form-select" required>
+                <option value="">-- Choose Vaccine --</option>
+                {% for vaccine in available_vaccines_to_add %}
+                  <option value="{{ vaccine.id }}">{{ vaccine.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <small class="text-muted">Only vaccines not currently in your inventory are shown.</small>
+          {% else %}
+            <div class="alert alert-info mb-0">
+              All available vaccines are already in your inventory. Update their stock quantity from the table above.
+            </div>
+          {% endif %}
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          {% if available_vaccines_to_add %}
+            <button type="submit" class="btn btn-success">
+              <i class="bi bi-arrow-right-circle me-1"></i> Proceed to Update Stock
+            </button>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

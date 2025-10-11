@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+from django.core.exceptions import ValidationError
+from django.utils import timezone
 
 class Parent(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -13,6 +15,8 @@ class Parent(models.Model):
     class Meta:
         verbose_name = "Parent"
         verbose_name_plural = "Parents"
+
+
 
 
 class Child(models.Model):
@@ -35,6 +39,17 @@ class Child(models.Model):
         verbose_name = "Child"
         verbose_name_plural = "Children"
         ordering = ['-date_of_birth']
+
+    def clean(self):
+        super().clean()
+        # Use localdate() to respect your TIME_ZONE setting
+        if self.date_of_birth and self.date_of_birth > timezone.localdate():
+            raise ValidationError({'date_of_birth': "Date of birth cannot be in the future."})
+
+    def save(self, *args, **kwargs):
+        # Ensure validation runs on every save
+        self.full_clean()
+        return super().save(*args, **kwargs)
 
 
 class Hospital(models.Model):
@@ -112,3 +127,23 @@ class Appointment(models.Model):
         from datetime import datetime
         appointment_datetime = datetime.combine(self.date, self.time)
         return appointment_datetime < datetime.now()
+class Inventory(models.Model):
+    """Tracks the stock of a specific vaccine at a specific hospital."""
+    hospital = models.ForeignKey('Hospital', on_delete=models.CASCADE, related_name='inventory')
+    vaccine = models.ForeignKey('Vaccine', on_delete=models.CASCADE)
+    stock_quantity = models.IntegerField(default=0)
+    last_updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        # Ensures a hospital can only have one entry per vaccine type
+        unique_together = ('hospital', 'vaccine')
+        verbose_name = "Vaccine Inventory"
+        verbose_name_plural = "Vaccine Inventories"
+        
+    def __str__(self):
+        return f"{self.hospital.name} - {self.vaccine.name} ({self.stock_quantity})"
+
+    # Optional: Custom validation to ensure stock is not negative
+    def clean(self):
+        if self.stock_quantity < 0:
+            raise ValidationError({'stock_quantity': "Stock quantity cannot be negative."})
